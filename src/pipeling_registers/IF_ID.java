@@ -3,7 +3,7 @@ package pipeling_registers;
 public class IF_ID {
 	private int nextPC;
 	private String instruction;
-	
+
 	public IF_ID() {
 		this.nextPC = 0;
 		this.instruction = "";

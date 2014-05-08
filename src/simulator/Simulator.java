@@ -11,11 +11,12 @@ public class Simulator {
 		System.out.println("Your code must be seperated by spaces only");
 		System.out.println("Ex: lw $1 $2 2 -> = lw $1, 2($2)");
 		System.out.println("Ex: add $1 $2 $3 -> = add $1, $2, $3");
-		
+
 		ArrayList<String> code = new ArrayList<String>();
-		BufferedReader rdr = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader rdr = new BufferedReader(
+				new InputStreamReader(System.in));
 		String s = rdr.readLine();
-		while(!s.equalsIgnoreCase("endcode")) {
+		while (!s.equalsIgnoreCase("endcode")) {
 			code.add(s);
 			s = rdr.readLine();
 		}

@@ -6,11 +6,11 @@ public class Instruction_Memory {
 	private int address;
 	private String[] instruction;
 	private String[][] instruction_mem;
-	
+
 	public Instruction_Memory(ArrayList<String> instructions) {
 		this.address = 0;
 		this.instruction = null;
-		for(int i = 0; i < instructions.size(); i++) {
+		for (int i = 0; i < instructions.size(); i++) {
 			this.instruction_mem[i] = instructions.get(i).split(" ");
 		}
 	}

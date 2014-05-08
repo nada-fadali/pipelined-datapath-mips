@@ -5,52 +5,53 @@ import java.util.ArrayList;
 import components.Instruction_Memory;
 
 public class Program {
-	//clock + PC
+	// clock + PC
 	private int clock;
 	private int pc;
-	
-	//components
+
+	// components
 	private Instruction_Memory instruct_mem;
-	
-	//pipeling registers
-	//...
-	
-	//contro signals
-	//...
-	
+
+	// Pipeline registers
+	// ...
+
+	// control signals
+	// ...
+
 	public Program(ArrayList<String> instructions) {
 		this.pc = 0;
 		this.clock = 5 + instructions.size();
 		this.instruct_mem = new Instruction_Memory(instructions);
 	}
-	
+
 	public void run() {
-		while(this.clock > 0) {
-			//...
+		while (this.clock > 0) {
+			// ...
 			this.clock--;
 		}
-		//print output
+		// print output
 	}
-	
-	private void fetch(){
-		
+
+	private void fetch() {
+
 	}
-	
-	private void decode(){
-		
+
+	private void decode() {
+
 	}
-	
+
 	private void exec() {
-		
+
 	}
-	
+
 	private void mem() {
-		
+
 	}
-	
+
 	private void wb() {
-		
+
 	}
+
 	public Instruction_Memory getInstruct_mem() {
 		return instruct_mem;
 	}
