@@ -44,12 +44,52 @@ public class ALU {
 		this.zero = zero;
 	}
 
-	public int getResult() {
-		return result;
-	}
+	// runs alu based on the operation
+	public int run(String op) {
+		switch (op) {
+		case "add":
+		case "addi":
+			this.result = this.data1 + this.data2;
+			break;
+		case "sub":
+			this.result = this.data1 - this.data2;
+			break;
+		case "and":
+		case "andi":
+			this.data1 = Integer.parseInt(Integer.toBinaryString(this.data1));
+			this.data2 = Integer.parseInt(Integer.toBinaryString(this.data2));
+			this.result = this.data1 & this.data2;
+			break;
+		case "or":
+		case "ori":
+			this.data1 = Integer.parseInt(Integer.toBinaryString(this.data1));
+			this.data2 = Integer.parseInt(Integer.toBinaryString(this.data2));
+			this.result = this.data1 | this.data2;
+			break;
+		case "nor":
+			;
+			break;
+		case "slt":
+		case "sltu":
+			this.result = (this.data1 < this.data2)? 1 : 0;
+			break;
+		case "sll":
+			this.result = this.data1 << this.data2;
+			break;
+		case "srl":
+			this.result = this.data1 >> this.data2;
+			break;
 
-	public void setResult(int result) {
-		this.result = result;
+		}
+
+		return this.result;
+	}
+	
+	public static void main(String[] args){ 
+		int x = 10;
+		int y = 11;
+		int res = x | y;
+		System.out.println(Integer.toBinaryString(~res));
 	}
 
 }

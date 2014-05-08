@@ -27,8 +27,8 @@ public class Instruction_Memory {
 		}
 	}
 
-	public String[] getInstruction() {
-		return instruction;
+	public String[] getInstruction(int index) {
+		return this.instruction_mem[index];
 	}
 
 	public void setInstruction(String[] instruction) {

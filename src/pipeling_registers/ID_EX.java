@@ -5,8 +5,8 @@ public class ID_EX {
 	private int readData1;
 	private int readData2;
 	private int i_instruction;
-	private int rt;
-	private int rd;
+	//private int rt;
+	//private int rd;
 
 	private int[] wb;
 	private int[] m;
@@ -51,22 +51,6 @@ public class ID_EX {
 		this.i_instruction = i_instruction;
 	}
 
-	public int getRt() {
-		return rt;
-	}
-
-	public void setRt(int rt) {
-		this.rt = rt;
-	}
-
-	public int getRd() {
-		return rd;
-	}
-
-	public void setRd(int rd) {
-		this.rd = rd;
-	}
-
 	// ex array
 	public int getALUSrc() {
 		return this.ex[0];
@@ -76,9 +60,9 @@ public class ID_EX {
 		return this.ex[1];
 	}
 
-	public int getRegDst() {
+	/*public int getRegDst() {
 		return this.ex[2];
-	}
+	}*/
 
 	public void setALUSrc(int ALUSrc) {
 		this.ex[0] = ALUSrc;

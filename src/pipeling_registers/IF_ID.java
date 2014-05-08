@@ -2,11 +2,11 @@ package pipeling_registers;
 
 public class IF_ID {
 	private int nextPC;
-	private String instruction;
+	private String[] instruction;
 
 	public IF_ID() {
 		this.nextPC = 0;
-		this.instruction = "";
+		this.instruction = null;
 	}
 
 	public int getNextPC() {
@@ -17,11 +17,11 @@ public class IF_ID {
 		this.nextPC = nextPC;
 	}
 
-	public String getInstruction() {
+	public String[] getInstruction() {
 		return instruction;
 	}
 
-	public void setInstruction(String instruction) {
+	public void setInstruction(String[] instruction) {
 		this.instruction = instruction;
 	}
 }
