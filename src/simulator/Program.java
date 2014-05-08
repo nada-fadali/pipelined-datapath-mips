@@ -15,8 +15,6 @@ public class Program {
 	// Pipeline registers
 	// ...
 
-	// control signals
-	// ...
 
 	public Program(ArrayList<String> instructions) {
 		this.pc = 0;
@@ -50,13 +48,5 @@ public class Program {
 
 	private void wb() {
 
-	}
-
-	public Instruction_Memory getInstruct_mem() {
-		return instruct_mem;
-	}
-
-	public void setInstruct_mem(Instruction_Memory instruct_mem) {
-		this.instruct_mem = instruct_mem;
 	}
 }
