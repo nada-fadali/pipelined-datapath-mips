@@ -117,7 +117,7 @@ public class Program {
 
 	}
 
-	private static int mux(int v1, int v2, int s) {
+	public static int mux(int v1, int v2, int s) {
 		if (s == 0)
 			return v1;
 		return v2;
