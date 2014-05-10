@@ -67,7 +67,9 @@ public class ALU {
 			this.result = this.data1 | this.data2;
 			break;
 		case "nor":
-			;
+			this.data1 = Integer.parseInt(Integer.toBinaryString(this.data1));
+			this.data2 = Integer.parseInt(Integer.toBinaryString(this.data2));
+			
 			break;
 		case "slt":
 		case "sltu":
@@ -84,12 +86,11 @@ public class ALU {
 
 		return this.result;
 	}
-	
-	public static void main(String[] args){ 
-		int x = 10;
-		int y = 11;
-		int res = x | y;
-		System.out.println(Integer.toBinaryString(~res));
+
+	public static void main(String[] args) {
+		int x = 7;
+		int y = 4;
+		System.out.println(- ~(x | y));
 	}
 
 }

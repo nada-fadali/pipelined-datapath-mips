@@ -5,8 +5,8 @@ public class ID_EX {
 	private int readData1;
 	private int readData2;
 	private int i_instruction;
-	//private int rt;
-	//private int rd;
+	private int rt;
+	private int rd;
 
 	private int[] wb;
 	private int[] m;
@@ -117,5 +117,23 @@ public class ID_EX {
 	public void setMemToReg(int MemToReg) {
 		this.wb[1] = MemToReg;
 	}
+
+	public int getRt() {
+		return rt;
+	}
+
+	public void setRt(int rt) {
+		this.rt = rt;
+	}
+
+	public int getRd() {
+		return rd;
+	}
+
+	public void setRd(int rd) {
+		this.rd = rd;
+	}
+	
+	
 
 }

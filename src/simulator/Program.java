@@ -1,6 +1,7 @@
 package simulator;
 
 import java.util.ArrayList;
+
 import pipeling_registers.*;
 import components.*;
 
@@ -47,31 +48,71 @@ public class Program {
 	}
 
 	private void decode() {
-		/*
-		 * switch(){ case "add": case "addi": case "sub": case "and": case
-		 * "andi": case "ori": case "or": case "nor": case "slt": case "sltu":
-		 * 
-		 * }
-		 */
-		if (this.if_id.getInstruction()[0].equalsIgnoreCase("beq")
-				|| this.if_id.getInstruction()[0].equalsIgnoreCase("bne")
-				|| this.if_id.getInstruction()[0].equalsIgnoreCase("j")
-				|| this.if_id.getInstruction()[0].equalsIgnoreCase("jal")
-				|| this.if_id.getInstruction()[0].equalsIgnoreCase("jr")
-				|| this.if_id.getInstruction()[0].equalsIgnoreCase("lw")
-				|| this.if_id.getInstruction()[0].equalsIgnoreCase("sw")) {
+		
+		//R FORMAT
+		if (this.if_id.getInstruction()[0].equalsIgnoreCase("add")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("sub")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("sll")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("srl")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("and")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("or")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("nor")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("slt")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("sltu")) {
+
+			// if the type of the instruction is an R type instruction:
+
+			// part 1 of the stage
+			this.reg_file.setRead_Reg1(this.if_id.getInstruction()[2]); // rs
+			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
+
+			this.reg_file.setRead_Reg2(this.if_id.getInstruction()[3]); // rt
+			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
+
+			this.id_ex.setI_instruction(-1);
+
+			this.id_ex.setRt(this.reg_file.getRead_Data2());
+			this.id_ex
+					.setRd(Integer.parseInt(this.if_id.getInstruction()[1]
+							.substring(1,
+									this.if_id.getInstruction()[1].length() - 1))); //rd
+
+			// part 2 of the stage
+			this.id_ex.setNextPC(this.if_id.getNextPC());
+			
+
+			// control signals
+			// wb
+			this.id_ex.setRegWrite(1);
+			this.id_ex.setMemToReg(0);
+			// m
+			this.id_ex.setMemRead(0);
+			this.id_ex.setMemWrite(0);
+			this.id_ex.setPCSrc(0); // check the explanation at the book
+			// ex
+			this.id_ex.setALUSrc(0);
+			this.id_ex.setALUOp(10);
+			this.id_ex.setRegDst(1);
 
 		}
+		
+		//I FORMAT
+		
+		//J FORMAT
+
 	}
 
+	//nada
 	private void exec() {
 
 	}
-
+	
+	//enjy
 	private void mem() {
 
 	}
-
+	
+	//rawan
 	private void wb() {
 
 	}
@@ -80,5 +121,9 @@ public class Program {
 		if (s == 0)
 			return v1;
 		return v2;
+	}
+
+	public static void main(String[] agrs) {
+
 	}
 }
