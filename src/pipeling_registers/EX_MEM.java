@@ -8,6 +8,9 @@ public class EX_MEM {
 	private int aluResult;
 	private int readData2;
 	private int mux3Output;
+	
+	//keeps track of the operation of the instruction
+	private String op;
 
 	public EX_MEM() {
 		this.wb = new int[2];
@@ -96,5 +99,13 @@ public class EX_MEM {
 
 	public void setMemToReg(int MemToReg) {
 		this.wb[1] = MemToReg;
+	}
+
+	public String getOp() {
+		return op;
+	}
+
+	public void setOp(String op) {
+		this.op = op;
 	}
 }

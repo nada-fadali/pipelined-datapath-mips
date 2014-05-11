@@ -49,6 +49,12 @@ public class Program {
 
 	private void decode() {
 
+		// transfer the op from id_id to id_ex
+		this.id_ex.setOp(this.if_id.getOp());
+
+		// passing nextPc doesn't depend on the instruction
+		this.id_ex.setNextPC(this.if_id.getNextPC());
+
 		// R FORMAT
 		if (this.if_id.getInstruction()[0].equalsIgnoreCase("add")
 				|| this.if_id.getInstruction()[0].equalsIgnoreCase("sub")
@@ -78,7 +84,7 @@ public class Program {
 									this.if_id.getInstruction()[1].length() - 1))); // rd
 
 			// part 2 of the stage
-			this.id_ex.setNextPC(this.if_id.getNextPC());
+			// this.id_ex.setNextPC(this.if_id.getNextPC());
 
 			// control signals
 			// wb
@@ -87,15 +93,151 @@ public class Program {
 			// m
 			this.id_ex.setMemRead(0);
 			this.id_ex.setMemWrite(0);
-			this.id_ex.setPCSrc(0); // check the explanation at the book
+			this.id_ex.setPCSrc(0);
 			// ex
 			this.id_ex.setALUSrc(0);
-			this.id_ex.setALUOp(10); // ??
+			this.id_ex.setALUOp(10);
 			this.id_ex.setRegDst(1);
 
-		}
+			// if the type of the instruction is an I type instruction:
 
-		// I FORMAT
+			if (this.if_id.getInstruction()[0].equalsIgnoreCase("addi")
+					|| this.if_id.getInstruction()[0].equalsIgnoreCase("sll")
+					|| this.if_id.getInstruction()[0].equalsIgnoreCase("srl")
+					|| this.if_id.getInstruction()[0].equalsIgnoreCase("andi")
+					|| this.if_id.getInstruction()[0].equalsIgnoreCase("ori")) {
+
+				// wb
+				this.id_ex.setRegWrite(1);
+				this.id_ex.setMemToReg(0);
+				// m
+				this.id_ex.setMemRead(0);
+				this.id_ex.setMemWrite(0);
+				this.id_ex.setPCSrc(0); // check the explanation at the book
+				// ex
+				this.id_ex.setALUSrc(1); // check mux2,as if we are saying
+											// branch= 0
+				this.id_ex.setALUOp(10);
+				this.id_ex.setRegDst(0); // check mux3 in the diagram
+
+				// this.id_ex.setNextPC(this.if_id.getNextPC());
+
+				this.reg_file.setRead_Reg1(this.if_id.getInstruction()[2]); // rs
+				this.id_ex.setReadData1(this.reg_file.getRead_Data1());
+
+				this.id_ex.setReadData2(-1);
+
+				this.reg_file.setRead_Reg2(this.if_id.getInstruction()[3]); // immediate
+																			// value
+				this.id_ex.setI_instruction(this.reg_file.getRead_Data2());
+
+				this.id_ex
+						.setRt(Integer.parseInt((this.if_id.getInstruction()[1])
+								.substring(1, (this.if_id.getInstruction()[1])
+										.length() - 1))); // rt
+
+				this.id_ex.setRd(-1);
+
+			}
+
+			if (this.if_id.getInstruction()[0].equalsIgnoreCase("beq")
+					|| this.if_id.getInstruction()[0].equalsIgnoreCase("bne")) {
+
+				this.id_ex.setRegWrite(0);
+				this.id_ex.setMemToReg(0); // it should be x
+				// m
+				this.id_ex.setMemRead(0);
+				this.id_ex.setMemWrite(0);
+				this.id_ex.setPCSrc(1); // equivalent to branch is equal to 1
+				// ex
+				this.id_ex.setALUSrc(0); // check mux2,as if we are saying
+											// branch= 0
+				this.id_ex.setALUOp(01);
+				this.id_ex.setRegDst(0); // it should be x
+
+				// this.id_ex.setNextPC(this.if_id.getNextPC());
+
+				this.reg_file.setRead_Reg1(this.if_id.getInstruction()[1]);
+				this.id_ex.setReadData1(this.reg_file.getRead_Data1());
+
+				this.reg_file.setRead_Reg2(this.if_id.getInstruction()[2]);
+				this.id_ex.setReadData2(this.reg_file.getRead_Data2());
+
+				// LABEL ADDRESS
+				// CASE NEED TO BE HANDLED
+				// this.id_ex.setI_instruction(Integer.parseInt((this.if_id
+				// .getInstruction()[3]).substring(1,
+				// (this.if_id.getInstruction()[3]).length() - 1)));
+
+				this.id_ex.setRt(-1);
+				this.id_ex.setRd(-1);
+			}
+
+			if (this.if_id.getInstruction()[0].equalsIgnoreCase("lw")) {
+
+				this.id_ex.setRegWrite(1);
+				this.id_ex.setMemToReg(1);
+				// m
+				this.id_ex.setMemRead(1);
+				this.id_ex.setMemWrite(0);
+				this.id_ex.setPCSrc(0);
+				// ex
+				this.id_ex.setALUSrc(1);
+				this.id_ex.setALUOp(00);
+				this.id_ex.setRegDst(0);
+
+				// this.id_ex.setNextPC(this.if_id.getNextPC());
+
+				// this.reg_file.setRead_Reg1((this.if_id.getInstruction()[2]).substring(beginIndex,
+				// endIndex));
+				this.reg_file.setRead_Reg1(this.if_id.getInstruction()[1]); // rs
+				this.id_ex.setReadData1(this.reg_file.getRead_Data1());
+
+				this.id_ex.setReadData2(-1);
+
+				this.id_ex.setI_instruction(Integer.parseInt(this.if_id
+						.getInstruction()[3])); // offset
+
+				this.id_ex
+						.setRt(Integer.parseInt((this.if_id.getInstruction()[2])
+								.substring(1, (this.if_id.getInstruction()[2])
+										.length() - 1))); // rt
+
+				this.id_ex.setRd(-1);
+			}
+			
+			if (this.if_id.getInstruction()[0].equalsIgnoreCase("sw")) {
+
+				this.id_ex.setRegWrite(0);
+				this.id_ex.setMemToReg(-1);
+				// m
+				this.id_ex.setMemRead(0);
+				this.id_ex.setMemWrite(1);
+				this.id_ex.setPCSrc(0);
+				// ex
+				this.id_ex.setALUSrc(1);
+				this.id_ex.setALUOp(00);
+				this.id_ex.setRegDst(0);
+
+				// this.id_ex.setNextPC(this.if_id.getNextPC());
+
+				this.reg_file.setRead_Reg1(this.if_id.getInstruction()[2]); // rs
+				this.id_ex.setReadData1(this.reg_file.getRead_Data1());
+
+				this.id_ex.setReadData2(-1);
+
+				this.id_ex.setI_instruction(Integer.parseInt(this.if_id
+						.getInstruction()[3])); // offset
+
+				this.id_ex
+						.setRt(Integer.parseInt((this.if_id.getInstruction()[1])
+								.substring(1, (this.if_id.getInstruction()[1])
+										.length() - 1))); // rt
+
+				this.id_ex.setRd(-1);
+			}
+
+		}
 
 		// J FORMAT
 
@@ -113,6 +255,7 @@ public class Program {
 		this.ex_mem.setMemWrite(this.id_ex.getMemWrite());
 		this.ex_mem.setPCSrc(this.id_ex.getPCSrc());
 
+		
 		// add nextPC from id_ex register to the label address for jump & branch
 		// add it to the adder value in the ex_mem register
 		// ~~~MUST HANDEL LABEL CASE~~~
@@ -122,7 +265,7 @@ public class Program {
 																// label address
 
 		// set alu data1 by read_data1 from reg_file
-		this.alu.setData1(this.reg_file.getRead_Data1());
+		this.alu.setData1(this.id_ex.getReadData1());
 
 		// set alu data2 by output from mux between
 		// reg_file read_data2
@@ -134,11 +277,14 @@ public class Program {
 		// alu control
 		// calculate the operation and pass it to alu
 		// run alu
-		// ...
+		this.alu.run(this.id_ex.getOp());
 
 		// mux 3
 		this.ex_mem.setMux3Output(mux(this.id_ex.getRt(), this.id_ex.getRd(),
 				this.id_ex.getRegDst()));
+		
+		//zero signal
+		this.ex_mem.setZero(this.alu.getZero());
 	}
 
 	// enjy

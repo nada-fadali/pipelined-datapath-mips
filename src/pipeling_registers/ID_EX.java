@@ -11,6 +11,9 @@ public class ID_EX {
 	private int[] wb;
 	private int[] m;
 	private int[] ex;
+	
+	//keeps track of the operation of the instruction
+	private String op;
 
 	public ID_EX() {
 		this.wb = new int[2];
@@ -132,6 +135,14 @@ public class ID_EX {
 
 	public void setRd(int rd) {
 		this.rd = rd;
+	}
+
+	public String getOp() {
+		return op;
+	}
+
+	public void setOp(String op) {
+		this.op = op;
 	}
 	
 	

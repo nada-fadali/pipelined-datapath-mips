@@ -81,7 +81,8 @@ public class ALU {
 		case "srl":
 			this.result = this.data1 >> this.data2;
 			break;
-
+		case "beq": this.result = (this.data1 == this.data2)? 1 : 0; break;
+		case "bne": this.result = (this.data1 != this.data2)? 1 : 0; break
 		}
 
 		return this.result;

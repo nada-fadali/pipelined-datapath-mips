@@ -24,4 +24,9 @@ public class IF_ID {
 	public void setInstruction(String[] instruction) {
 		this.instruction = instruction;
 	}
+	
+	//method that returns the operation of the instruction
+	public String getOp(){
+		return this.instruction[0];
+	}
 }
