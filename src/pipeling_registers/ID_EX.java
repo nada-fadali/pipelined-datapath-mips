@@ -60,9 +60,9 @@ public class ID_EX {
 		return this.ex[1];
 	}
 
-	/*public int getRegDst() {
+	public int getRegDst() {
 		return this.ex[2];
-	}*/
+	}
 
 	public void setALUSrc(int ALUSrc) {
 		this.ex[0] = ALUSrc;

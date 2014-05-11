@@ -48,8 +48,8 @@ public class Program {
 	}
 
 	private void decode() {
-		
-		//R FORMAT
+
+		// R FORMAT
 		if (this.if_id.getInstruction()[0].equalsIgnoreCase("add")
 				|| this.if_id.getInstruction()[0].equalsIgnoreCase("sub")
 				|| this.if_id.getInstruction()[0].equalsIgnoreCase("sll")
@@ -75,11 +75,10 @@ public class Program {
 			this.id_ex
 					.setRd(Integer.parseInt(this.if_id.getInstruction()[1]
 							.substring(1,
-									this.if_id.getInstruction()[1].length() - 1))); //rd
+									this.if_id.getInstruction()[1].length() - 1))); // rd
 
 			// part 2 of the stage
 			this.id_ex.setNextPC(this.if_id.getNextPC());
-			
 
 			// control signals
 			// wb
@@ -91,28 +90,63 @@ public class Program {
 			this.id_ex.setPCSrc(0); // check the explanation at the book
 			// ex
 			this.id_ex.setALUSrc(0);
-			this.id_ex.setALUOp(10);
+			this.id_ex.setALUOp(10); // ??
 			this.id_ex.setRegDst(1);
 
 		}
-		
-		//I FORMAT
-		
-		//J FORMAT
+
+		// I FORMAT
+
+		// J FORMAT
 
 	}
 
-	//nada
+	// nada
 	private void exec() {
+		// set the control signals
+		// get them from id_ex register
+		// wb
+		this.ex_mem.setRegWrite(this.id_ex.getRegWrite());
+		this.ex_mem.setMemToReg(this.id_ex.getMemToReg());
+		// m
+		this.ex_mem.setMemRead(this.id_ex.getMemRead());
+		this.ex_mem.setMemWrite(this.id_ex.getMemWrite());
+		this.ex_mem.setPCSrc(this.id_ex.getPCSrc());
 
+		// add nextPC from id_ex register to the label address for jump & branch
+		// add it to the adder value in the ex_mem register
+		// ~~~MUST HANDEL LABEL CASE~~~
+		this.ex_mem.setAdderOutput(this.id_ex.getNextPC() + 3); // 3 is bogus
+																// must be
+																// replaced with
+																// label address
+
+		// set alu data1 by read_data1 from reg_file
+		this.alu.setData1(this.reg_file.getRead_Data1());
+
+		// set alu data2 by output from mux between
+		// reg_file read_data2
+		// Immediate value/i_instruction
+		// selector: AluSrc
+		this.alu.setData2(mux(this.reg_file.getRead_Data2(),
+				this.id_ex.getI_instruction(), this.id_ex.getALUSrc()));
+
+		// alu control
+		// calculate the operation and pass it to alu
+		// run alu
+		// ...
+
+		// mux 3
+		this.ex_mem.setMux3Output(mux(this.id_ex.getRt(), this.id_ex.getRd(),
+				this.id_ex.getRegDst()));
 	}
-	
-	//enjy
+
+	// enjy
 	private void mem() {
 
 	}
-	
-	//rawan
+
+	// rawan
 	private void wb() {
 
 	}
