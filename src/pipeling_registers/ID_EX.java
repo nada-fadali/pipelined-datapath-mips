@@ -4,7 +4,7 @@ public class ID_EX {
 	private int nextPC;
 	private int readData1;
 	private int readData2;
-	private int i_instruction;
+	private int extend; //was i_Instuction
 	private int rt;
 	private int rd;
 
@@ -46,12 +46,12 @@ public class ID_EX {
 		this.readData2 = readData2;
 	}
 
-	public int getI_instruction() {
-		return i_instruction;
+	public int getExtend() {
+		return extend;
 	}
 
-	public void setI_instruction(int i_instruction) {
-		this.i_instruction = i_instruction;
+	public void setExtend(int extend) {
+		this.extend = extend;
 	}
 
 	// ex array

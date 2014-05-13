@@ -26,8 +26,12 @@ public class Program {
 	private int pcsrc; // branch/jump signal
 
 	// input starting address from the user
+	// See description -> Simulator Inputs Sections
 	private int stAdd;
 
+	/*
+	 * Constructor
+	 */
 	public Program(ArrayList<String> instructions, int stAdd) {
 		this.pc = 0;
 		this.clock = 5 + instructions.size();
@@ -64,7 +68,7 @@ public class Program {
 
 	private void decode() {
 
-		// transfer the op from id_id to id_ex
+		// transfer the op from if_id to id_ex
 		this.id_ex.setOp(this.if_id.getOp());
 
 		// passing nextPc doesn't depend on the instruction
@@ -90,7 +94,7 @@ public class Program {
 			this.reg_file.setRead_Reg2(this.if_id.getInstruction()[3]); // rt
 			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
 
-			this.id_ex.setI_instruction(-1);
+			this.id_ex.setExtend(-1);
 
 			this.id_ex.setRt(this.reg_file.getRead_Data2());
 			this.id_ex
@@ -144,7 +148,7 @@ public class Program {
 
 				this.reg_file.setRead_Reg2(this.if_id.getInstruction()[3]); // immediate
 																			// value
-				this.id_ex.setI_instruction(this.reg_file.getRead_Data2());
+				this.id_ex.setExtend(this.reg_file.getRead_Data2());
 
 				this.id_ex
 						.setRt(Integer.parseInt((this.if_id.getInstruction()[1])
@@ -180,7 +184,7 @@ public class Program {
 
 				// LABEL ADDRESS
 				// CASE NEED TO BE HANDLED
-				// this.id_ex.setI_instruction(Integer.parseInt((this.if_id
+				// this.id_ex.setExtend(Integer.parseInt((this.if_id
 				// .getInstruction()[3]).substring(1,
 				// (this.if_id.getInstruction()[3]).length() - 1)));
 
@@ -210,7 +214,7 @@ public class Program {
 
 				this.id_ex.setReadData2(-1);
 
-				this.id_ex.setI_instruction(Integer.parseInt(this.if_id
+				this.id_ex.setExtend(Integer.parseInt(this.if_id
 						.getInstruction()[3])); // offset
 
 				this.id_ex
@@ -241,7 +245,7 @@ public class Program {
 
 				this.id_ex.setReadData2(-1);
 
-				this.id_ex.setI_instruction(Integer.parseInt(this.if_id
+				this.id_ex.setExtend(Integer.parseInt(this.if_id
 						.getInstruction()[3])); // offset
 
 				this.id_ex
@@ -275,7 +279,7 @@ public class Program {
 		// ~~~MUST HANDEL LABEL CASE~~~
 		this.ex_mem.setAdderOutput(this.id_ex.getNextPC() + 3); // 3 is bogus
 																// must be
-																// replaced with
+			 													// replaced with
 																// label address
 
 		// set alu data1 by read_data1 from reg_file
@@ -286,7 +290,7 @@ public class Program {
 		// Immediate value/i_instruction
 		// selector: AluSrc
 		this.alu.setData2(mux(this.reg_file.getRead_Data2(),
-				this.id_ex.getI_instruction(), this.id_ex.getALUSrc()));
+				this.id_ex.getExtend(), this.id_ex.getALUSrc()));
 
 		// alu control
 		// calculate the operation and pass it to alu
