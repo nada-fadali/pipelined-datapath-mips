@@ -88,17 +88,18 @@ public class Program {
 			// if the type of the instruction is an R type instruction:
 
 			// part 1 of the stage
-			this.reg_file.setRead_Reg1(this.if_id.getInstruction()[2]); // rs
+			String[] tmp = this.if_id.getInstruction();
+			this.reg_file.setRead_Reg1(tmp[2]); // rs
 			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
 
-			this.reg_file.setRead_Reg2(this.if_id.getInstruction()[3]); // rt
+			this.reg_file.setRead_Reg2(tmp[3]); // rt
 			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
 
 			this.id_ex.setExtend(-1);
 
 			this.id_ex.setRt(this.reg_file.getRead_Data2());
-			this.id_ex.setRd(Integer.parseInt(this.if_id.getInstruction()[1])); //rd
-	
+			this.id_ex.setRd(Integer.parseInt(tmp[1])); // rd
+
 			// part 2 of the stage
 			// this.id_ex.setNextPC(this.if_id.getNextPC());
 
@@ -114,135 +115,133 @@ public class Program {
 			this.id_ex.setALUSrc(0);
 			this.id_ex.setALUOp(10);
 			this.id_ex.setRegDst(1);
+		}
+		// if the type of the instruction is an I type instruction:
+		else if (this.if_id.getInstruction()[0].equalsIgnoreCase("addi")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("sll")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("srl")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("andi")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("ori")) {
 
-			// if the type of the instruction is an I type instruction:
+			// wb
+			this.id_ex.setRegWrite(1);
+			this.id_ex.setMemToReg(0);
+			// m
+			this.id_ex.setMemRead(0);
+			this.id_ex.setMemWrite(0);
+			this.id_ex.setPCSrc(0); // check the explanation at the book
+			// ex
+			this.id_ex.setALUSrc(1); // check mux2,as if we are saying
+										// branch= 0
+			this.id_ex.setALUOp(10);
+			this.id_ex.setRegDst(0); // check mux3 in the diagram
 
-			if (this.if_id.getInstruction()[0].equalsIgnoreCase("addi")
-					|| this.if_id.getInstruction()[0].equalsIgnoreCase("sll")
-					|| this.if_id.getInstruction()[0].equalsIgnoreCase("srl")
-					|| this.if_id.getInstruction()[0].equalsIgnoreCase("andi")
-					|| this.if_id.getInstruction()[0].equalsIgnoreCase("ori")) {
+			// this.id_ex.setNextPC(this.if_id.getNextPC());
 
-				// wb
-				this.id_ex.setRegWrite(1);
-				this.id_ex.setMemToReg(0);
-				// m
-				this.id_ex.setMemRead(0);
-				this.id_ex.setMemWrite(0);
-				this.id_ex.setPCSrc(0); // check the explanation at the book
-				// ex
-				this.id_ex.setALUSrc(1); // check mux2,as if we are saying
-											// branch= 0
-				this.id_ex.setALUOp(10);
-				this.id_ex.setRegDst(0); // check mux3 in the diagram
+			String[] tmp = this.if_id.getInstruction();
+			this.reg_file.setRead_Reg1(tmp[2]); // rs
+			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
 
-				// this.id_ex.setNextPC(this.if_id.getNextPC());
+			this.id_ex.setReadData2(-1);
 
-				this.reg_file.setRead_Reg1(this.if_id.getInstruction()[2]); // rs
-				this.id_ex.setReadData1(this.reg_file.getRead_Data1());
+			this.reg_file.setRead_Reg2(tmp[3]); // immediate
+												// value
+			this.id_ex.setExtend(this.reg_file.getRead_Data2());
 
-				this.id_ex.setReadData2(-1);
+			this.id_ex.setRt(Integer.parseInt((tmp[1]))); // rt
 
-				this.reg_file.setRead_Reg2(this.if_id.getInstruction()[3]); // immediate
-																			// value
-				this.id_ex.setExtend(this.reg_file.getRead_Data2());
+			this.id_ex.setRd(-1);
 
-				this.id_ex.setRt(Integer.parseInt((this.if_id.getInstruction()[1]))); // rt
+		}
 
-				this.id_ex.setRd(-1);
+		else if (this.if_id.getInstruction()[0].equalsIgnoreCase("beq")
+				|| this.if_id.getInstruction()[0].equalsIgnoreCase("bne")) {
+			// wb
+			this.id_ex.setRegWrite(0);
+			this.id_ex.setMemToReg(0); // it should be x
+			// m
+			this.id_ex.setMemRead(0);
+			this.id_ex.setMemWrite(0);
+			this.id_ex.setPCSrc(1); // equivalent to branch is equal to 1
+			// ex
+			this.id_ex.setALUSrc(0); // check mux2,as if we are saying
+										// branch= 0
+			this.id_ex.setALUOp(01);
+			this.id_ex.setRegDst(0); // it should be x
 
-			}
+			// this.id_ex.setNextPC(this.if_id.getNextPC());
 
-			if (this.if_id.getInstruction()[0].equalsIgnoreCase("beq")
-					|| this.if_id.getInstruction()[0].equalsIgnoreCase("bne")) {
+			String[] tmp = this.if_id.getInstruction();
+			this.reg_file.setRead_Reg1(tmp[1]);
+			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
 
-				this.id_ex.setRegWrite(0);
-				this.id_ex.setMemToReg(0); // it should be x
-				// m
-				this.id_ex.setMemRead(0);
-				this.id_ex.setMemWrite(0);
-				this.id_ex.setPCSrc(1); // equivalent to branch is equal to 1
-				// ex
-				this.id_ex.setALUSrc(0); // check mux2,as if we are saying
-											// branch= 0
-				this.id_ex.setALUOp(01);
-				this.id_ex.setRegDst(0); // it should be x
+			this.reg_file.setRead_Reg2(tmp[2]);
+			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
 
-				// this.id_ex.setNextPC(this.if_id.getNextPC());
+			// LABEL ADDRESS
+			// update: HANDELED
+			this.id_ex.setExtend(Integer.parseInt(tmp[3]));
 
-				this.reg_file.setRead_Reg1(this.if_id.getInstruction()[1]);
-				this.id_ex.setReadData1(this.reg_file.getRead_Data1());
+			this.id_ex.setRt(-1);
+			this.id_ex.setRd(-1);
+		}
 
-				this.reg_file.setRead_Reg2(this.if_id.getInstruction()[2]);
-				this.id_ex.setReadData2(this.reg_file.getRead_Data2());
+		else if (this.if_id.getInstruction()[0].equalsIgnoreCase("lw")) {
 
-				// LABEL ADDRESS
-				// CASE NEED TO BE HANDLED
-				// this.id_ex.setExtend(Integer.parseInt((this.if_id
-				// .getInstruction()[3]).substring(1,
-				// (this.if_id.getInstruction()[3]).length() - 1)));
+			this.id_ex.setRegWrite(1);
+			this.id_ex.setMemToReg(1);
+			// m
+			this.id_ex.setMemRead(1);
+			this.id_ex.setMemWrite(0);
+			this.id_ex.setPCSrc(0);
+			// ex
+			this.id_ex.setALUSrc(1);
+			this.id_ex.setALUOp(00);
+			this.id_ex.setRegDst(0);
 
-				this.id_ex.setRt(-1);
-				this.id_ex.setRd(-1);
-			}
+			// this.id_ex.setNextPC(this.if_id.getNextPC());
 
-			if (this.if_id.getInstruction()[0].equalsIgnoreCase("lw")) {
+			// this.reg_file.setRead_Reg1((this.if_id.getInstruction()[2]).substring(beginIndex,
+			// endIndex));
+			String[] tmp = this.if_id.getInstruction();
+			this.reg_file.setRead_Reg1(tmp[1]); // rs
+			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
 
-				this.id_ex.setRegWrite(1);
-				this.id_ex.setMemToReg(1);
-				// m
-				this.id_ex.setMemRead(1);
-				this.id_ex.setMemWrite(0);
-				this.id_ex.setPCSrc(0);
-				// ex
-				this.id_ex.setALUSrc(1);
-				this.id_ex.setALUOp(00);
-				this.id_ex.setRegDst(0);
+			this.id_ex.setReadData2(-1);
 
-				// this.id_ex.setNextPC(this.if_id.getNextPC());
+			this.id_ex.setExtend(Integer.parseInt(tmp[3])); // offset
 
-				// this.reg_file.setRead_Reg1((this.if_id.getInstruction()[2]).substring(beginIndex,
-				// endIndex));
-				this.reg_file.setRead_Reg1(this.if_id.getInstruction()[1]); // rs
-				this.id_ex.setReadData1(this.reg_file.getRead_Data1());
+			this.id_ex.setRt(Integer.parseInt((tmp[2]))); // rt
 
-				this.id_ex.setReadData2(-1);
+			this.id_ex.setRd(-1);
+		}
 
-				this.id_ex.setExtend(Integer.parseInt(this.if_id
-						.getInstruction()[3])); // offset
+		else if (this.if_id.getInstruction()[0].equalsIgnoreCase("sw")) {
 
-				this.id_ex.setRt(Integer.parseInt((this.if_id.getInstruction()[2]))); // rt
+			this.id_ex.setRegWrite(0);
+			this.id_ex.setMemToReg(-1);
+			// m
+			this.id_ex.setMemRead(0);
+			this.id_ex.setMemWrite(1);
+			this.id_ex.setPCSrc(0);
+			// ex
+			this.id_ex.setALUSrc(1);
+			this.id_ex.setALUOp(00);
+			this.id_ex.setRegDst(0);
 
-				this.id_ex.setRd(-1);
-			}
+			// this.id_ex.setNextPC(this.if_id.getNextPC());
 
-			if (this.if_id.getInstruction()[0].equalsIgnoreCase("sw")) {
+			String[] tmp = this.if_id.getInstruction();
+			this.reg_file.setRead_Reg1(tmp[2]); // rs
+			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
 
-				this.id_ex.setRegWrite(0);
-				this.id_ex.setMemToReg(-1);
-				// m
-				this.id_ex.setMemRead(0);
-				this.id_ex.setMemWrite(1);
-				this.id_ex.setPCSrc(0);
-				// ex
-				this.id_ex.setALUSrc(1);
-				this.id_ex.setALUOp(00);
-				this.id_ex.setRegDst(0);
+			this.id_ex.setReadData2(-1);
 
-				// this.id_ex.setNextPC(this.if_id.getNextPC());
+			this.id_ex.setExtend(Integer.parseInt(tmp[3])); // offset
 
-				this.reg_file.setRead_Reg1(this.if_id.getInstruction()[2]); // rs
-				this.id_ex.setReadData1(this.reg_file.getRead_Data1());
+			this.id_ex.setRt(Integer.parseInt((tmp[1]))); // rt
 
-				this.id_ex.setReadData2(-1);
-
-				this.id_ex.setExtend(Integer.parseInt(this.if_id.getInstruction()[3])); // offset
-
-				this.id_ex.setRt(Integer.parseInt((this.if_id.getInstruction()[1]))); // rt
-
-				this.id_ex.setRd(-1);
-			}
-
+			this.id_ex.setRd(-1);
 		}
 
 		// J FORMAT
@@ -264,10 +263,9 @@ public class Program {
 		// add nextPC from id_ex register to the label address for jump & branch
 		// add it to the adder value in the ex_mem register
 		// ~~~MUST HANDEL LABEL CASE~~~
-		this.ex_mem.setAdderOutput(this.id_ex.getNextPC() + 3); // 3 is bogus
-																// must be
-			 													// replaced with
-																// label address
+		//this.ex_mem.setAdderOutput(this.id_ex.getNextPC() + 3); 
+		//update: case handeled
+		this.ex_mem.setAdderOutput(this.id_ex.getExtend());
 
 		// set alu data1 by read_data1 from reg_file
 		this.alu.setData1(this.id_ex.getReadData1());
