@@ -9,9 +9,11 @@ public class Instruction_Memory {
 	private ArrayList<String> labels;
 
 	public Instruction_Memory(ArrayList<String> instructions) {
-		this.address = 0; // not needed
-		this.instruction = null; // not needed
-		this.labels = null; // not needed
+		//this.address = 0; // not needed
+		//this.instruction = null; // not needed
+		//this.labels = null; // not needed
+		//^ not needed bc done by compiler automatically
+		
 		for (int i = 0; i < instructions.size(); i++) {
 			this.intializeInstruction(instructions.get(i), i);
 		}
@@ -120,13 +122,13 @@ public class Instruction_Memory {
 		return this.instruction_mem[index];
 	}
 
-	public void setInstruction(String[] instruction) {
+	/*public void setInstruction(String[] instruction) {
 		this.instruction = instruction;
-	}
+	}*/
 
-	public int getAddress() {
+	/*public int getAddress() {
 		return address;
-	}
+	}*/
 
 	public void setAddress(int address) {
 		this.address = address;

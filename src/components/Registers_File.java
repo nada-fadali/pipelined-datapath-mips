@@ -11,12 +11,16 @@ public class Registers_File {
 	private int[] registers;
 
 	public Registers_File() {
-		this.registers = new int[32];
+		this.registers = new int[33]; //Extra one added for $ra
 	}
 
-	// getters & setters
+	/*
+	 *  Getters & Setters
+	 */
 	public void setRead_Reg1(String reg) {
-		this.read_Reg1 = Integer.parseInt(reg.substring(1, reg.length() - 1));
+		//this.read_Reg1 = Integer.parseInt(reg.substring(1, reg.length() - 1));
+		//^ that case handled in Instruction_Memory
+		this.read_Reg1 = Integer.parseInt(reg);
 	}
 
 	/*public int getRead_Reg1() {
@@ -24,7 +28,9 @@ public class Registers_File {
 	}*/
 
 	public void setRead_Reg2(String reg) {
-		this.read_Reg2 = Integer.parseInt(reg.substring(1, reg.length() - 1));
+		//this.read_Reg2 = Integer.parseInt(reg.substring(1, reg.length() - 1));
+		//^ that case handled in Instruction_Memory		
+		this.read_Reg2 = Integer.parseInt(reg);
 	}
 
 	/*public int getRead_Reg2() {
@@ -35,17 +41,17 @@ public class Registers_File {
 		this.write_Reg = write_Reg;
 	}
 
-	public int getWrite_Reg() {
+	/*public int getWrite_Reg() {
 		return write_Reg;
-	}
+	}*/
 
 	public void setWrite_Data(int write_Data) {
 		this.write_Data = write_Data;
 	}
 
-	public int getWrite_Data() {
+	/*public int getWrite_Data() {
 		return write_Data;
-	}
+	}*/
 
 	public int getRead_Data1() {
 		return this.registers[this.read_Reg1];
@@ -63,19 +69,27 @@ public class Registers_File {
 		this.read_Data2 = read_Data2;
 	}*/
 
-	public int[] getRegisters() {
+	/*public int[] getRegisters() {
 		return registers;
-	}
+	}*/
 
-	public void setRegisters(int[] registers) {
+	/*public void setRegisters(int[] registers) {
 		this.registers = registers;
-	}
+	}*/
 
-	public int getRegWrite() {
+	/*public int getRegWrite() {
 		return regWrite;
-	}
+	}*/
 
-	public void setRegWrite(int regWrite) {
+	/*public void setRegWrite(int regWrite) {
 		this.regWrite = regWrite;
+	}*/
+	
+	public int getRa(){
+		return this.registers[32];
+	}
+	
+	public void setRa(int value){
+		this.registers[32] = value;
 	}
 }
