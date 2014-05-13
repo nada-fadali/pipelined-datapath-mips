@@ -23,12 +23,27 @@ public class Program {
 	private MEM_WB mem_wb;
 
 	// control signals
-	private int pcsrc;
+	private int pcsrc; // branch/jump signal
 
-	public Program(ArrayList<String> instructions) {
+	// input starting address from the user
+	private int stAdd;
+
+	public Program(ArrayList<String> instructions, int stAdd) {
 		this.pc = 0;
 		this.clock = 5 + instructions.size();
+		this.stAdd = stAdd;
+
+		// initialize component
 		this.instruct_mem = new Instruction_Memory(instructions);
+		this.reg_file = new Registers_File();
+		this.alu = new ALU();
+		this.data_memory = new Data_Memory();
+
+		// initialize registers
+		this.if_id = new IF_ID();
+		this.id_ex = new ID_EX();
+		this.ex_mem = new EX_MEM();
+		this.mem_wb = new MEM_WB();
 	}
 
 	public void run() {
@@ -205,7 +220,7 @@ public class Program {
 
 				this.id_ex.setRd(-1);
 			}
-			
+
 			if (this.if_id.getInstruction()[0].equalsIgnoreCase("sw")) {
 
 				this.id_ex.setRegWrite(0);
@@ -255,7 +270,6 @@ public class Program {
 		this.ex_mem.setMemWrite(this.id_ex.getMemWrite());
 		this.ex_mem.setPCSrc(this.id_ex.getPCSrc());
 
-		
 		// add nextPC from id_ex register to the label address for jump & branch
 		// add it to the adder value in the ex_mem register
 		// ~~~MUST HANDEL LABEL CASE~~~
@@ -282,8 +296,8 @@ public class Program {
 		// mux 3
 		this.ex_mem.setMux3Output(mux(this.id_ex.getRt(), this.id_ex.getRd(),
 				this.id_ex.getRegDst()));
-		
-		//zero signal
+
+		// zero signal
 		this.ex_mem.setZero(this.alu.getZero());
 	}
 

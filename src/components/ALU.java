@@ -69,11 +69,11 @@ public class ALU {
 		case "nor":
 			this.data1 = Integer.parseInt(Integer.toBinaryString(this.data1));
 			this.data2 = Integer.parseInt(Integer.toBinaryString(this.data2));
-			
+
 			break;
 		case "slt":
 		case "sltu":
-			this.result = (this.data1 < this.data2)? 1 : 0;
+			this.result = (this.data1 < this.data2) ? 1 : 0;
 			break;
 		case "sll":
 			this.result = this.data1 << this.data2;
@@ -81,8 +81,12 @@ public class ALU {
 		case "srl":
 			this.result = this.data1 >> this.data2;
 			break;
-		case "beq": this.result = (this.data1 == this.data2)? 1 : 0; break;
-		case "bne": this.result = (this.data1 != this.data2)? 1 : 0; break
+		case "beq":
+			this.zero = (this.data1 == this.data2) ? 1 : 0;
+			break;
+		case "bne":
+			this.zero = (this.data1 != this.data2) ? 1 : 0;
+			break;
 		}
 
 		return this.result;
@@ -91,7 +95,7 @@ public class ALU {
 	public static void main(String[] args) {
 		int x = 7;
 		int y = 4;
-		System.out.println(- ~(x | y));
+		System.out.println(-~(x | y));
 	}
 
 }
