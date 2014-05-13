@@ -97,11 +97,8 @@ public class Program {
 			this.id_ex.setExtend(-1);
 
 			this.id_ex.setRt(this.reg_file.getRead_Data2());
-			this.id_ex
-					.setRd(Integer.parseInt(this.if_id.getInstruction()[1]
-							.substring(1,
-									this.if_id.getInstruction()[1].length() - 1))); // rd
-
+			this.id_ex.setRd(Integer.parseInt(this.if_id.getInstruction()[1])); //rd
+	
 			// part 2 of the stage
 			// this.id_ex.setNextPC(this.if_id.getNextPC());
 
@@ -150,10 +147,7 @@ public class Program {
 																			// value
 				this.id_ex.setExtend(this.reg_file.getRead_Data2());
 
-				this.id_ex
-						.setRt(Integer.parseInt((this.if_id.getInstruction()[1])
-								.substring(1, (this.if_id.getInstruction()[1])
-										.length() - 1))); // rt
+				this.id_ex.setRt(Integer.parseInt((this.if_id.getInstruction()[1]))); // rt
 
 				this.id_ex.setRd(-1);
 
@@ -217,10 +211,7 @@ public class Program {
 				this.id_ex.setExtend(Integer.parseInt(this.if_id
 						.getInstruction()[3])); // offset
 
-				this.id_ex
-						.setRt(Integer.parseInt((this.if_id.getInstruction()[2])
-								.substring(1, (this.if_id.getInstruction()[2])
-										.length() - 1))); // rt
+				this.id_ex.setRt(Integer.parseInt((this.if_id.getInstruction()[2]))); // rt
 
 				this.id_ex.setRd(-1);
 			}
@@ -245,13 +236,9 @@ public class Program {
 
 				this.id_ex.setReadData2(-1);
 
-				this.id_ex.setExtend(Integer.parseInt(this.if_id
-						.getInstruction()[3])); // offset
+				this.id_ex.setExtend(Integer.parseInt(this.if_id.getInstruction()[3])); // offset
 
-				this.id_ex
-						.setRt(Integer.parseInt((this.if_id.getInstruction()[1])
-								.substring(1, (this.if_id.getInstruction()[1])
-										.length() - 1))); // rt
+				this.id_ex.setRt(Integer.parseInt((this.if_id.getInstruction()[1]))); // rt
 
 				this.id_ex.setRd(-1);
 			}
