@@ -267,8 +267,8 @@ public class Program {
 			this.id_ex.setALUOp(01);
 			this.id_ex.setRegDst(0); // it should be x
 			/* end of common assignments */
-			
-			switch(tmp[0]){
+
+			switch (tmp[0]) {
 			case "j":
 				this.id_ex.setExtend(Integer.parseInt(tmp[1]));
 				break;
@@ -327,14 +327,43 @@ public class Program {
 
 	// enjy
 	private void mem() {
-
+		this.data_memory.setAddress(this.ex_mem.getAluResult());
+		this.data_memory.setWrite_Data(this.ex_mem.getReadData2());
+		this.data_memory.setRead_Data(this.data_memory.getRead_Data());// mesh
+																		// 3arfa
+																		// de
+																		// 2wii
+		this.data_memory.setMemRead(this.id_ex.getMemRead());
+		this.data_memory.setMemWrite(this.id_ex.getMemWrite());
+		this.mem_wb.setMux3Output(this.ex_mem.getMux3Output());
+		this.mem_wb.setAlu_Result(this.ex_mem.getAluResult());
 	}
 
 	// rawan
 	private void wb() {
+		//set the control signal 
+		this.mem_wb.setMemToReg(this.ex_mem.getMemToReg());
 
+		//move the value of WB from last stage
+		this.mem_wb.setMemWrite(this.ex_mem.getMemWrite());
+
+		//set the control signal RegWrite	this.Registers_file.setReg_Write(this.mem_wb.getMemWrite());
+
+	//set the inputs of the mux
+		this.mem_wb.setMux3Output(mux(this.data_memory.getRead_Data	(),this.data_memory.getAddress());
+
+	//set write_register as the output of the mux in stage id_ex
+		this.Registers_file.setWrite_Register(this.id_ex.getMux3Output());
+
+	//set write data as the output of the mux	
+	this.Registers_file.setWrite_data(this.mem_wb.getMux3Output());
 	}
-
+	
+	/*
+	 * MUX method
+	 * public static
+	 * para: first value, second value, selector
+	 */
 	public static int mux(int v1, int v2, int s) {
 		if (s == 0)
 			return v1;
