@@ -34,7 +34,7 @@ public class Program {
 	 */
 	public Program(ArrayList<String> instructions, int stAdd) {
 		this.pc = 0;
-		this.clock = 5 + instructions.size();
+		this.clock = 4 + instructions.size();
 		this.stAdd = stAdd;
 
 		// initialize component
@@ -144,9 +144,10 @@ public class Program {
 
 			this.id_ex.setReadData2(-1);
 
-			this.reg_file.setRead_Reg2(tmp[3]); // immediate
+			//this.reg_file.setRead_Reg2(tmp[3]); // immediate
 												// value
-			this.id_ex.setExtend(this.reg_file.getRead_Data2());
+			//this.id_ex.setExtend(this.reg_file.getRead_Data2());
+			this.id_ex.setExtend(Integer.parseInt(tmp[3]));
 
 			this.id_ex.setRt(Integer.parseInt((tmp[1]))); // rt
 
@@ -171,10 +172,10 @@ public class Program {
 
 			// this.id_ex.setNextPC(this.if_id.getNextPC());
 
-			this.reg_file.setRead_Reg1(tmp[1]);
+			this.reg_file.setRead_Reg1(tmp[1]); //rs
 			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
 
-			this.reg_file.setRead_Reg2(tmp[2]);
+			this.reg_file.setRead_Reg2(tmp[2]); //rt
 			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
 
 			// LABEL ADDRESS
@@ -342,21 +343,21 @@ public class Program {
 	// rawan
 	private void wb() {
 		//set the control signal 
-		this.mem_wb.setMemToReg(this.ex_mem.getMemToReg());
-
-		//move the value of WB from last stage
-		this.mem_wb.setMemWrite(this.ex_mem.getMemWrite());
-
-		//set the control signal RegWrite	this.Registers_file.setReg_Write(this.mem_wb.getMemWrite());
-
-	//set the inputs of the mux
-		this.mem_wb.setMux3Output(mux(this.data_memory.getRead_Data	(),this.data_memory.getAddress());
-
-	//set write_register as the output of the mux in stage id_ex
-		this.Registers_file.setWrite_Register(this.id_ex.getMux3Output());
-
-	//set write data as the output of the mux	
-	this.Registers_file.setWrite_data(this.mem_wb.getMux3Output());
+			this.mem_wb.setMemToReg(this.ex_mem.getMemToReg());
+	
+			//move the value of WB from last stage
+			this.mem_wb.setMemWrite(this.ex_mem.getMemWrite());
+	
+			//set the control signal RegWrite	this.Registers_file.setReg_Write(this.mem_wb.getMemWrite());
+	
+		//set the inputs of the mux
+			this.mem_wb.setMux3Output();
+	
+		//set write_register as the output of the mux in stage id_ex
+			this.Registers_file.setWrite_Register(mux(this.data_memory.getRead_Data	(),this.data_memory.getAddress());
+	
+		//set write data as the output of the mux	
+		this.Registers_file.setWrite_data(this.mem_wb.getMux3Output());
 	}
 	
 	/*
