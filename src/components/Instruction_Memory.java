@@ -7,31 +7,30 @@ public class Instruction_Memory {
 	private String[] instruction;
 	private String[][] instruction_mem;
 	private ArrayList<String> labels;
-	
-	private int instructionsNumber;
+
+	// private int instructionsNumber;
 
 	public Instruction_Memory(ArrayList<String> instructions) {
 		this.instruction_mem = new String[20][4];
-		this.instructionsNumber = instructions.size();
-		System.out.println(this.instructionsNumber);
-		
+		// this.instructionsNumber = instructions.size();
+		// System.out.println(this.instructionsNumber);
+
 		for (int i = 0; i < instructions.size(); i++) {
 			this.intializeInstruction(instructions.get(i), i);
 		}
 	}
-	
-	public int getInstructionsNumber(){
-		return this.instructionsNumber;
-	}
 
-	/* 
-	 * Helper Method 
+	/*
+	 * public int getInstructionsNumber(){ return this.instructionsNumber; }
+	 */
+
+	/*
+	 * Helper Method
 	 */
 	private void intializeInstruction(String instruction, int i) {
 
 		// split incoming instruction
 		String[] tmp = instruction.split(" ");
-		
 
 		// check on position 0
 		switch (tmp[0]) {
@@ -100,8 +99,8 @@ public class Instruction_Memory {
 
 	}
 
-	/* 
-	 * Helper Method 
+	/*
+	 * Helper Method
 	 */
 	private String getLabelAddress(String label) {
 		for (int i = 0; i < this.labels.size(); i++) {
@@ -111,7 +110,7 @@ public class Instruction_Memory {
 		}
 		return "0";
 	}
-	
+
 	/*
 	 * Getters & Setters
 	 */
@@ -122,6 +121,5 @@ public class Instruction_Memory {
 	public void setAddress(int address) {
 		this.address = address;
 	}
-	
-	
+
 }

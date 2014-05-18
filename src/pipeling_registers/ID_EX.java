@@ -161,7 +161,7 @@ public class ID_EX {
 
 		String restOfContents = "\n nextPc: " + this.nextPC + ", ReadData1: "
 				+ this.readData1 + ", ReadData2: " + this.readData2
-				+ ", I_instruction: " + this.getExtend() + ", rt: "
+				+ ", Extend: " + this.getExtend() + ", rt: "
 				+ this.getRt() + ", rd: " + this.getRd();
 
 		return (allControlSignals + restOfContents);

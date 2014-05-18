@@ -9,7 +9,9 @@ public class Program {
 	// clock + PC
 	private int clock;
 	private int pc;
-	private int counter;
+
+	// variables needed for the pipeline
+	private int[][] pipeline;
 
 	// components
 	private Instruction_Memory instruct_mem;
@@ -35,7 +37,18 @@ public class Program {
 	 */
 	public Program(ArrayList<String> instructions) {
 		this.pc = -1;
-		this.clock = 4 + instructions.size();
+		// this.clock = 4 + instructions.size();
+		this.clock = 0;
+		
+		this.pipeline = new int[instructions.size()][4 + instructions.size()];
+		for (int i = 0; i < this.pipeline.length; i++) {
+			this.pipeline[i][i] = 10; //if
+			this.pipeline[i][i + 1] = 20; //id
+			this.pipeline[i][i + 2] = 30; //ex
+			this.pipeline[i][i + 3] = 40; //mem
+			this.pipeline[i][i + 4] = 50; //wb
+		}
+
 		this.stAdd = 0;
 
 		// initialize component
@@ -43,8 +56,6 @@ public class Program {
 		this.reg_file = new Registers_File();
 		this.alu = new ALU();
 		this.data_memory = new Data_Memory();
-		
-		this.counter = this.instruct_mem.getInstructionsNumber();
 
 		// initialize registers
 		this.if_id = new IF_ID();
@@ -54,57 +65,67 @@ public class Program {
 	}
 
 	public void run() {
-		/*while (this.clock > 0) {
-			this.fetch();
-			//this.decode();
-			//this.exec();
-			//this.mem();
-			this.wb();
-			//this.pc++;
-			//System.out.println(this.clock);
-			this.clock--;
-		}*/
-		this.fetch();
+		/*
+		 * while (this.clock > 0) { this.fetch(); //this.decode();
+		 * //this.exec(); //this.mem(); this.wb(); //this.pc++;
+		 * //System.out.println(this.clock); this.clock--; } this.fetch();
+		 */
 		
+
+		while (this.clock < this.pipeline[0].length) {
+			
+			for (int i = 0; i < pipeline.length; i++) {
+				switch (pipeline[i][this.clock]) {
+				case 10:
+					this.fetch();
+					break;
+				case 20:
+					this.decode();
+					break;
+				case 30:
+					this.exec();
+					break;
+				case 40:
+					this.mem();
+					break;
+				case 50:
+					this.wb();
+					break;
+				default:
+					break;
+				}
+				
+				
+			}
+			this.clock++;
+		}
+
 	}
 
 	private void fetch() {
-		//this.pc = mux(if_id.getNextPC(), ex_mem.getAdderOutput(), this.pcsrc);
-	
-		//System.out.println(this.pc);
-		//System.out.println(this.pc);
-		
-		this.decode();
-		
-		this.pc = mux(pc+1, ex_mem.getAdderOutput(), this.pcsrc);
-	
+
+		this.pc = mux(pc + 1, ex_mem.getAdderOutput(), this.pcsrc);
+
 		// fetch line
 		this.if_id.setInstruction(this.instruct_mem.getInstruction(this.pc));
-		
-		this.if_id.setNextPC(this.pc+1);
-		
-		
-		
+
+		this.if_id.setNextPC(this.pc + 1);
+
 		System.out.println(this.if_id.print());
 		System.out.println("__________________________________________");
-		
-		
+
 	}
 
 	private void decode() {
-		
-		this.exec();
-
 		// transfer the op from if_id to id_ex
 		this.id_ex.setOp(this.if_id.getOp());
 
 		// passing nextPc doesn't depend on the instruction
 		this.id_ex.setNextPC(this.if_id.getNextPC());
-		
 
 		String[] tmp = this.if_id.getInstruction();
-		System.out.println(tmp[0]);
-		//System.out.println(this.if_id.getInstruction());
+		//System.out.println(tmp[0]);
+		// System.out.println(this.if_id.getInstruction());
 
 		// R FORMAT
 		if (tmp[0].equalsIgnoreCase("add")
@@ -120,7 +141,7 @@ public class Program {
 			// if the type of the instruction is an R type instruction:
 
 			// part 1 of the stage
-			//System.out.println(tmp[2]);
+			// System.out.println(tmp[2]);
 			this.reg_file.setRead_Reg1(tmp[2]); // rs
 			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
 
@@ -313,16 +334,14 @@ public class Program {
 				break;
 			}
 		}
-		
+
 		System.out.println(this.id_ex.print());
 		System.out.println("__________________________________________");
-		
-		//this.fetch();
+
 	}
 
 	private void exec() {
-		this.mem();
-		
+
 		// set the control signals
 		// get them from id_ex register
 		// wb
@@ -361,20 +380,18 @@ public class Program {
 
 		// zero signal
 		this.ex_mem.setZero(this.alu.getZero());
-		
+
 		System.out.println(this.ex_mem.print());
 		System.out.println("__________________________________________");
-		
-		//this.decode();
+
 	}
 
 	private void mem() {
-		this.wb();
 		
 		// wb
 		this.mem_wb.setRegWrite(this.ex_mem.getRegWrite());
 		this.mem_wb.setMemToReg(this.ex_mem.getMemToReg());
-		
+
 		this.data_memory.setAddress(this.ex_mem.getAluResult());
 		this.data_memory.setWrite_Data(this.ex_mem.getReadData2());
 		this.data_memory.setMemRead(this.id_ex.getMemRead());
@@ -385,23 +402,21 @@ public class Program {
 		this.mem_wb.setRead_Data(this.data_memory.getRead_Data());
 
 		this.pcsrc = this.alu.getZero() & this.ex_mem.getPCSrc();
-		
+
 		System.out.println(this.mem_wb.print());
 		System.out.println("__________________________________________");
-		
-		//this.exec();
+
 	}
 
 	private void wb() {
 		this.reg_file.setWrite_Reg(this.mem_wb.getMux3Output());
-		this.reg_file.setWrite_Data(mux(this.mem_wb.getRead_Data(), this.ex_mem.getAluResult(), this.mem_wb.getMemToReg()));
-		
+		this.reg_file.setWrite_Data(mux(this.mem_wb.getRead_Data(),
+				this.ex_mem.getAluResult(), this.mem_wb.getMemToReg()));
+
 		this.reg_file.setRegWrite(this.mem_wb.getRegWrite());
-		
-	
+
 		System.out.println("*________________________________________* \n");
-		
-		//this.mem();
+
 	}
 
 	/*
