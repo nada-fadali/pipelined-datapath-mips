@@ -5,7 +5,7 @@ public class IF_ID {
 	private String[] instruction;
 
 	public IF_ID() {
-		this.nextPC = 0;
+		//this.nextPC = 5;
 		this.instruction = null;
 	}
 
@@ -28,5 +28,13 @@ public class IF_ID {
 	//method that returns the operation of the instruction
 	public String getOp(){
 		return this.instruction[0];
+	}
+	
+	//public String printIf_IDcontents(){
+	public String print() {
+		String s = "";
+		for(int i = 0; i < this.instruction.length; i++)
+			s += this.instruction[i] + "|";
+		return( "IF/ID contents: nextPC = " + this.nextPC + " , instruction: " + s) ; 
 	}
 }

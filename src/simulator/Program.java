@@ -9,6 +9,7 @@ public class Program {
 	// clock + PC
 	private int clock;
 	private int pc;
+	private int counter;
 
 	// components
 	private Instruction_Memory instruct_mem;
@@ -33,7 +34,7 @@ public class Program {
 	 * Constructor
 	 */
 	public Program(ArrayList<String> instructions) {
-		this.pc = 0;
+		this.pc = -1;
 		this.clock = 4 + instructions.size();
 		this.stAdd = 0;
 
@@ -42,6 +43,8 @@ public class Program {
 		this.reg_file = new Registers_File();
 		this.alu = new ALU();
 		this.data_memory = new Data_Memory();
+		
+		this.counter = this.instruct_mem.getInstructionsNumber();
 
 		// initialize registers
 		this.if_id = new IF_ID();
@@ -51,30 +54,46 @@ public class Program {
 	}
 
 	public void run() {
-		while (this.clock > 0) {
+		/*while (this.clock > 0) {
 			this.fetch();
-			this.decode();
-			this.exec();
-			this.mem();
+			//this.decode();
+			//this.exec();
+			//this.mem();
 			this.wb();
-			
-			// print output
-			//	...
-			
+			//this.pc++;
+			//System.out.println(this.clock);
 			this.clock--;
-		}
+		}*/
+		this.fetch();
 		
 	}
 
 	private void fetch() {
-		this.pc = mux(if_id.getNextPC(), ex_mem.getAdderOutput(), this.pcsrc);
+		//this.pc = mux(if_id.getNextPC(), ex_mem.getAdderOutput(), this.pcsrc);
+	
+		//System.out.println(this.pc);
+		//System.out.println(this.pc);
 		
+		this.decode();
+		
+		this.pc = mux(pc+1, ex_mem.getAdderOutput(), this.pcsrc);
+	
+		// fetch line
 		this.if_id.setInstruction(this.instruct_mem.getInstruction(this.pc));
-
-		this.if_id.setNextPC(this.pc++);
+		
+		this.if_id.setNextPC(this.pc+1);
+		
+		
+		
+		System.out.println(this.if_id.print());
+		System.out.println("__________________________________________");
+		
+		
 	}
 
 	private void decode() {
+		
+		this.exec();
 
 		// transfer the op from if_id to id_ex
 		this.id_ex.setOp(this.if_id.getOp());
@@ -84,6 +103,8 @@ public class Program {
 		
 
 		String[] tmp = this.if_id.getInstruction();
+		System.out.println(tmp[0]);
+		//System.out.println(this.if_id.getInstruction());
 
 		// R FORMAT
 		if (tmp[0].equalsIgnoreCase("add")
@@ -292,9 +313,16 @@ public class Program {
 				break;
 			}
 		}
+		
+		System.out.println(this.id_ex.print());
+		System.out.println("__________________________________________");
+		
+		//this.fetch();
 	}
 
 	private void exec() {
+		this.mem();
+		
 		// set the control signals
 		// get them from id_ex register
 		// wb
@@ -333,9 +361,16 @@ public class Program {
 
 		// zero signal
 		this.ex_mem.setZero(this.alu.getZero());
+		
+		System.out.println(this.ex_mem.print());
+		System.out.println("__________________________________________");
+		
+		//this.decode();
 	}
 
 	private void mem() {
+		this.wb();
+		
 		// wb
 		this.mem_wb.setRegWrite(this.ex_mem.getRegWrite());
 		this.mem_wb.setMemToReg(this.ex_mem.getMemToReg());
@@ -350,6 +385,11 @@ public class Program {
 		this.mem_wb.setRead_Data(this.data_memory.getRead_Data());
 
 		this.pcsrc = this.alu.getZero() & this.ex_mem.getPCSrc();
+		
+		System.out.println(this.mem_wb.print());
+		System.out.println("__________________________________________");
+		
+		//this.exec();
 	}
 
 	private void wb() {
@@ -357,6 +397,11 @@ public class Program {
 		this.reg_file.setWrite_Data(mux(this.mem_wb.getRead_Data(), this.ex_mem.getAluResult(), this.mem_wb.getMemToReg()));
 		
 		this.reg_file.setRegWrite(this.mem_wb.getRegWrite());
+		
+	
+		System.out.println("*________________________________________* \n");
+		
+		//this.mem();
 	}
 
 	/*

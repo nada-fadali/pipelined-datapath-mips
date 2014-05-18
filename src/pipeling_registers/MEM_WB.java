@@ -52,4 +52,19 @@ public class MEM_WB {
 	public void setMemToReg(int MemToReg) {
 		this.wb[1] = MemToReg;
 	}
+	
+	//public String printMem_Wbcontents() {
+	public String print() {
+		String wbControlSignals = "RegWrite: " + this.wb[0] + ", MemToReg: "
+				+ this.wb[1];
+
+		String allControlSignals = "MEM/WB contents:\n " + wbControlSignals
+				+ ", ";
+
+		String restOfContents = "\n ReadData: " + this.read_Data
+				+ ", ALUresult: " + this.alu_Result + ", ALUresult: "
+				+ ", Mux3output: " + this.mux3Output;
+
+		return (allControlSignals + restOfContents);
+	}
 }

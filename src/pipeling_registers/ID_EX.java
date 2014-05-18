@@ -145,6 +145,28 @@ public class ID_EX {
 		this.op = op;
 	}
 	
+	//public String printId_Excontents() {
+	public String print(){
+		String wbControlSignals = "RegWrite: " + this.wb[0] + ", MemToReg: "
+				+ this.wb[1];
+
+		String mControlSignals = "MemRead: " + this.m[0] + ", MemWrite: "
+				+ this.m[1] + ", PCSrc: " + this.m[2];
+
+		String exControlSignals = "ALUSrc: " + this.ex[0] + ", ALUOp: "
+				+ this.ex[1] + ", RegDst: " + this.ex[2];
+
+		String allControlSignals = "ID/Ex contents:\n " + wbControlSignals
+				+ ", " + mControlSignals + ", " + exControlSignals;
+
+		String restOfContents = "\n nextPc: " + this.nextPC + ", ReadData1: "
+				+ this.readData1 + ", ReadData2: " + this.readData2
+				+ ", I_instruction: " + this.getExtend() + ", rt: "
+				+ this.getRt() + ", rd: " + this.getRd();
+
+		return (allControlSignals + restOfContents);
+	}
+	
 	
 
 }

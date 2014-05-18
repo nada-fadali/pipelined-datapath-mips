@@ -108,4 +108,23 @@ public class EX_MEM {
 	public void setOp(String op) {
 		this.op = op;
 	}
+	
+	//public String printEx_Memcontents() {
+	public String print() {
+		String wbControlSignals = "RegWrite: " + this.wb[0] + ", MemToReg: "
+				+ this.wb[1];
+
+		String mControlSignals = "MemRead: " + this.m[0] + ", MemWrite: "
+				+ this.m[1] + ", PCSrc: " + this.m[2];
+
+		String allControlSignals = "EX/MEM contents:\n " + wbControlSignals
+				+ ", " + mControlSignals + ", ";
+
+		String restOfContents = "\n AdderOutput: " + this.adderOutput
+				+ ", Zero: " + this.zero + ", ALUresult: " + this.aluResult
+				+ ", ReadData2: " + this.readData2 + ", Mux3output: "
+				+ this.mux3Output;
+
+		return (allControlSignals + restOfContents);
+	}
 }

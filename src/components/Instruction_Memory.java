@@ -7,13 +7,21 @@ public class Instruction_Memory {
 	private String[] instruction;
 	private String[][] instruction_mem;
 	private ArrayList<String> labels;
+	
+	private int instructionsNumber;
 
 	public Instruction_Memory(ArrayList<String> instructions) {
-		this.instruction_mem = new String[20][20];
+		this.instruction_mem = new String[20][4];
+		this.instructionsNumber = instructions.size();
+		System.out.println(this.instructionsNumber);
 		
 		for (int i = 0; i < instructions.size(); i++) {
 			this.intializeInstruction(instructions.get(i), i);
 		}
+	}
+	
+	public int getInstructionsNumber(){
+		return this.instructionsNumber;
 	}
 
 	/* 
@@ -114,4 +122,6 @@ public class Instruction_Memory {
 	public void setAddress(int address) {
 		this.address = address;
 	}
+	
+	
 }
