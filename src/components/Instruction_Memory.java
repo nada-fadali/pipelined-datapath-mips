@@ -9,10 +9,7 @@ public class Instruction_Memory {
 	private ArrayList<String> labels;
 
 	public Instruction_Memory(ArrayList<String> instructions) {
-		//this.address = 0; // not needed
-		//this.instruction = null; // not needed
-		//this.labels = null; // not needed
-		//^ not needed bc done by compiler automatically
+		this.instruction_mem = new String[20][20];
 		
 		for (int i = 0; i < instructions.size(); i++) {
 			this.intializeInstruction(instructions.get(i), i);
@@ -26,6 +23,7 @@ public class Instruction_Memory {
 
 		// split incoming instruction
 		String[] tmp = instruction.split(" ");
+		
 
 		// check on position 0
 		switch (tmp[0]) {
@@ -33,13 +31,11 @@ public class Instruction_Memory {
 		case "lw":
 		case "sw":
 			this.instruction_mem[i][0] = tmp[0]; // lw or sw
-			this.instruction_mem[i][1] = tmp[1].substring(0,
-					tmp[1].length() - 1); // r1
+			this.instruction_mem[i][1] = tmp[1].substring(1); // r1
 
 			tmp = tmp[2].split("(");
 			this.instruction_mem[i][3] = tmp[0]; // offset
-			this.instruction_mem[i][2] = tmp[1].substring(0,
-					tmp[1].length() - 1); // r2
+			this.instruction_mem[i][2] = tmp[1].substring(1); // r2
 			break;
 		/* R */
 		case "add":
@@ -50,12 +46,9 @@ public class Instruction_Memory {
 		case "sltu":
 		case "slt":
 			this.instruction_mem[i][0] = tmp[0]; // add or sub or ...
-			this.instruction_mem[i][1] = tmp[1].substring(0,
-					tmp[1].length() - 1); // rd
-			this.instruction_mem[i][2] = tmp[2].substring(0,
-					tmp[2].length() - 1); // rs
-			this.instruction_mem[i][3] = tmp[3].substring(0,
-					tmp[3].length() - 1);
+			this.instruction_mem[i][1] = tmp[1].substring(1); // rd
+			this.instruction_mem[i][2] = tmp[2].substring(1); // rs
+			this.instruction_mem[i][3] = tmp[3].substring(1);
 			break;
 		/* I */
 		case "addi":
@@ -64,20 +57,16 @@ public class Instruction_Memory {
 		case "sll":
 		case "srl":
 			this.instruction_mem[i][0] = tmp[0]; // addi or andi or ....
-			this.instruction_mem[i][1] = tmp[1].substring(0,
-					tmp[1].length() - 1); // rt
-			this.instruction_mem[i][2] = tmp[2].substring(0,
-					tmp[2].length() - 1); // rs
+			this.instruction_mem[i][1] = tmp[1].substring(1); // rt
+			this.instruction_mem[i][2] = tmp[2].substring(1); // rs
 			this.instruction_mem[i][3] = tmp[3]; // value
 			break;
 		/* B */
 		case "beq":
 		case "bne":
 			this.instruction_mem[i][0] = tmp[0]; // beq or bne
-			this.instruction_mem[i][1] = tmp[1].substring(0,
-					tmp[1].length() - 1); // rs
-			this.instruction_mem[i][2] = tmp[2].substring(0,
-					tmp[2].length() - 1); // rt
+			this.instruction_mem[i][1] = tmp[1].substring(1); // rs
+			this.instruction_mem[i][2] = tmp[2].substring(1); // rt
 			/*
 			 * fetch label address and put it in here
 			 */
@@ -121,14 +110,6 @@ public class Instruction_Memory {
 	public String[] getInstruction(int index) {
 		return this.instruction_mem[index];
 	}
-
-	/*public void setInstruction(String[] instruction) {
-		this.instruction = instruction;
-	}*/
-
-	/*public int getAddress() {
-		return address;
-	}*/
 
 	public void setAddress(int address) {
 		this.address = address;

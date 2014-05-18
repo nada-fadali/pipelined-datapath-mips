@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 public class Simulator {
 	public static void main(String[] args) throws IOException {
-		System.out.println("Please enter the starting address");
+		//System.out.println("Please enter the starting address");
 		ArrayList<String> code = new ArrayList<String>();
 		BufferedReader rdr = new BufferedReader(
 				new InputStreamReader(System.in));
-		int stAdd = Integer.parseInt(rdr.readLine());
+		//int stAdd = Integer.parseInt(rdr.readLine());
 				
 		
 		System.out.println("Please enter your code followed by 'endcode");
@@ -21,7 +21,10 @@ public class Simulator {
 			code.add(s);
 			s = rdr.readLine();
 		}
-		@SuppressWarnings("unused")
-		Program simulator = new Program(code, stAdd);
+		
+		
+		
+		Program simulator = new Program(code);
+		simulator.run();
 	}
 }

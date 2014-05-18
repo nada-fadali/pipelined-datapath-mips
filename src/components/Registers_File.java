@@ -20,12 +20,9 @@ public class Registers_File {
 	public void setRead_Reg1(String reg) {
 		//this.read_Reg1 = Integer.parseInt(reg.substring(1, reg.length() - 1));
 		//^ that case handled in Instruction_Memory
+		//System.out.println(reg);
 		this.read_Reg1 = Integer.parseInt(reg);
 	}
-
-	/*public int getRead_Reg1() {
-		return read_Reg1;
-	}*/
 
 	public void setRead_Reg2(String reg) {
 		//this.read_Reg2 = Integer.parseInt(reg.substring(1, reg.length() - 1));
@@ -33,57 +30,35 @@ public class Registers_File {
 		this.read_Reg2 = Integer.parseInt(reg);
 	}
 
-	/*public int getRead_Reg2() {
-		return read_Reg2;
-	}*/
 
 	public void setWrite_Reg(int write_Reg) {
 		this.write_Reg = write_Reg;
 	}
 
-	/*public int getWrite_Reg() {
-		return write_Reg;
-	}*/
-
-	public void setWrite_Data(int write_Data) {
-		this.write_Data = write_Data;
+	public void setWrite_Data(int data) {
+		//this.write_Data = write_Data;
+		if(this.regWrite == 1)
+			this.registers[this.write_Reg] = data;
 	}
 
-	/*public int getWrite_Data() {
-		return write_Data;
-	}*/
 
 	public int getRead_Data1() {
 		return this.registers[this.read_Reg1];
 	}
 
-	/*public void setRead_Data1(int read_Data1) {
-		this.read_Data1 = read_Data1;
-	}*/
 
 	public int getRead_Data2() {
 		return this.registers[this.read_Data2];
 	}
 
-	/*public void setRead_Data2(int read_Data2) {
-		this.read_Data2 = read_Data2;
-	}*/
 
-	/*public int[] getRegisters() {
-		return registers;
-	}*/
-
-	/*public void setRegisters(int[] registers) {
-		this.registers = registers;
-	}*/
-
-	/*public int getRegWrite() {
+	public int getRegWrite() {
 		return regWrite;
-	}*/
+	}
 
-	/*public void setRegWrite(int regWrite) {
+	public void setRegWrite(int regWrite) {
 		this.regWrite = regWrite;
-	}*/
+	}
 	
 	public int getRa(){
 		return this.registers[32];

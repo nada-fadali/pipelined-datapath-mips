@@ -32,10 +32,10 @@ public class Program {
 	/*
 	 * Constructor
 	 */
-	public Program(ArrayList<String> instructions, int stAdd) {
+	public Program(ArrayList<String> instructions) {
 		this.pc = 0;
 		this.clock = 4 + instructions.size();
-		this.stAdd = stAdd;
+		this.stAdd = 0;
 
 		// initialize component
 		this.instruct_mem = new Instruction_Memory(instructions);
@@ -52,15 +52,23 @@ public class Program {
 
 	public void run() {
 		while (this.clock > 0) {
-			// ...
+			this.fetch();
+			this.decode();
+			this.exec();
+			this.mem();
+			this.wb();
+			
+			// print output
+			//	...
+			
 			this.clock--;
 		}
-		// print output
+		
 	}
 
 	private void fetch() {
 		this.pc = mux(if_id.getNextPC(), ex_mem.getAdderOutput(), this.pcsrc);
-
+		
 		this.if_id.setInstruction(this.instruct_mem.getInstruction(this.pc));
 
 		this.if_id.setNextPC(this.pc++);
@@ -73,6 +81,7 @@ public class Program {
 
 		// passing nextPc doesn't depend on the instruction
 		this.id_ex.setNextPC(this.if_id.getNextPC());
+		
 
 		String[] tmp = this.if_id.getInstruction();
 
@@ -90,6 +99,7 @@ public class Program {
 			// if the type of the instruction is an R type instruction:
 
 			// part 1 of the stage
+			//System.out.println(tmp[2]);
 			this.reg_file.setRead_Reg1(tmp[2]); // rs
 			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
 
@@ -144,9 +154,9 @@ public class Program {
 
 			this.id_ex.setReadData2(-1);
 
-			//this.reg_file.setRead_Reg2(tmp[3]); // immediate
-												// value
-			//this.id_ex.setExtend(this.reg_file.getRead_Data2());
+			// this.reg_file.setRead_Reg2(tmp[3]); // immediate
+			// value
+			// this.id_ex.setExtend(this.reg_file.getRead_Data2());
 			this.id_ex.setExtend(Integer.parseInt(tmp[3]));
 
 			this.id_ex.setRt(Integer.parseInt((tmp[1]))); // rt
@@ -172,10 +182,10 @@ public class Program {
 
 			// this.id_ex.setNextPC(this.if_id.getNextPC());
 
-			this.reg_file.setRead_Reg1(tmp[1]); //rs
+			this.reg_file.setRead_Reg1(tmp[1]); // rs
 			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
 
-			this.reg_file.setRead_Reg2(tmp[2]); //rt
+			this.reg_file.setRead_Reg2(tmp[2]); // rt
 			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
 
 			// LABEL ADDRESS
@@ -284,7 +294,6 @@ public class Program {
 		}
 	}
 
-	// nada
 	private void exec() {
 		// set the control signals
 		// get them from id_ex register
@@ -326,44 +335,32 @@ public class Program {
 		this.ex_mem.setZero(this.alu.getZero());
 	}
 
-	// enjy
 	private void mem() {
+		// wb
+		this.mem_wb.setRegWrite(this.ex_mem.getRegWrite());
+		this.mem_wb.setMemToReg(this.ex_mem.getMemToReg());
+		
 		this.data_memory.setAddress(this.ex_mem.getAluResult());
 		this.data_memory.setWrite_Data(this.ex_mem.getReadData2());
-		this.data_memory.setRead_Data(this.data_memory.getRead_Data());// mesh
-																		// 3arfa
-																		// de
-																		// 2wii
 		this.data_memory.setMemRead(this.id_ex.getMemRead());
 		this.data_memory.setMemWrite(this.id_ex.getMemWrite());
+
 		this.mem_wb.setMux3Output(this.ex_mem.getMux3Output());
 		this.mem_wb.setAlu_Result(this.ex_mem.getAluResult());
+		this.mem_wb.setRead_Data(this.data_memory.getRead_Data());
+
+		this.pcsrc = this.alu.getZero() & this.ex_mem.getPCSrc();
 	}
 
-	// rawan
 	private void wb() {
-		//set the control signal 
-			this.mem_wb.setMemToReg(this.ex_mem.getMemToReg());
-	
-			//move the value of WB from last stage
-			this.mem_wb.setMemWrite(this.ex_mem.getMemWrite());
-	
-			//set the control signal RegWrite	this.Registers_file.setReg_Write(this.mem_wb.getMemWrite());
-	
-		//set the inputs of the mux
-			this.mem_wb.setMux3Output();
-	
-		//set write_register as the output of the mux in stage id_ex
-			this.Registers_file.setWrite_Register(mux(this.data_memory.getRead_Data	(),this.data_memory.getAddress());
-	
-		//set write data as the output of the mux	
-		this.Registers_file.setWrite_data(this.mem_wb.getMux3Output());
+		this.reg_file.setWrite_Reg(this.mem_wb.getMux3Output());
+		this.reg_file.setWrite_Data(mux(this.mem_wb.getRead_Data(), this.ex_mem.getAluResult(), this.mem_wb.getMemToReg()));
+		
+		this.reg_file.setRegWrite(this.mem_wb.getRegWrite());
 	}
-	
+
 	/*
-	 * MUX method
-	 * public static
-	 * para: first value, second value, selector
+	 * MUX method public static parameters: first value, second value, selector
 	 */
 	public static int mux(int v1, int v2, int s) {
 		if (s == 0)

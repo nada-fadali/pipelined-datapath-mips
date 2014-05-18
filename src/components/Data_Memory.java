@@ -17,51 +17,29 @@ public class Data_Memory {
 	}
 
 	// getters & setters
-	public int getAddress() {
-		return address;
-	}
-
 	public void setAddress(int address) {
 		this.address = address;
 	}
-
-	public int getWrite_Data() {
-		return write_Data;
+	
+	public void setWrite_Data(int data) {
+		if(this.memWrite == 1)
+			this.memory.set(this.address, data);
 	}
-
-	public void setWrite_Data(int write_Data) {
-		this.write_Data = write_Data;
-	}
-
-	public int getRead_Data() {
-		return read_Data;
-	}
-
-	public void setRead_Data(int read_Data) {
-		this.read_Data = read_Data;
-	}
-
-	public int getMemWrite() {
-		return memWrite;
-	}
-
+	
 	public void setMemWrite(int memWrite) {
 		this.memWrite = memWrite;
 	}
-
-	public int getMemRead() {
-		return memRead;
-	}
-
+	
 	public void setMemRead(int memRead) {
 		this.memRead = memRead;
 	}
-
-	public int getData(int index) {
-		return this.memory.get(index);
+	
+	public int getRead_Data() {
+		if(this.memRead == 1)
+			return this.memory.get(this.address);
+		else
+			return -1;
 	}
-
-	public void setData(int index, int value) {
-		this.memory.set(index, value);
-	}
+	
+	
 }
