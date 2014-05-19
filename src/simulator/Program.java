@@ -35,7 +35,7 @@ public class Program {
 	/*
 	 * Constructor
 	 */
-	public Program(ArrayList<String> instructions) {
+	public Program(ArrayList<String> instructions, ArrayList<String> data, int address) {
 		this.pc = -1;
 		// this.clock = 4 + instructions.size();
 		this.clock = 0;
@@ -49,13 +49,16 @@ public class Program {
 			this.pipeline[i][i + 4] = 50; //wb
 		}
 
-		this.stAdd = 0;
+		this.stAdd = address;
 
 		// initialize component
 		this.instruct_mem = new Instruction_Memory(instructions);
 		this.reg_file = new Registers_File();
 		this.alu = new ALU();
 		this.data_memory = new Data_Memory();
+		
+		if(data.size() > 0)
+			this.data_memory.setData(data);
 
 		// initialize registers
 		this.if_id = new IF_ID();
@@ -71,34 +74,54 @@ public class Program {
 		 * //System.out.println(this.clock); this.clock--; } this.fetch();
 		 */
 		
+		System.out.println("START OF SIMULATION\n\n");
 
 		while (this.clock < this.pipeline[0].length) {
+			System.out.println("Clock cycle #" + (this.clock+1) );
 			
 			for (int i = 0; i < pipeline.length; i++) {
 				switch (pipeline[i][this.clock]) {
 				case 10:
+					//System.out.println("IF");
 					this.fetch();
 					break;
 				case 20:
+					//System.out.println("ID");
 					this.decode();
 					break;
 				case 30:
+					//System.out.println("EX");
 					this.exec();
 					break;
 				case 40:
+					//System.out.println("MEM");
 					this.mem();
 					break;
 				case 50:
+					//System.out.println("WB");
 					this.wb();
 					break;
 				default:
 					break;
 				}
+				// print control signals that not part of the pipeline registers
+				System.out.println("Control Signals:\n"
+						+ "	PCSrc: " + this.pcsrc + "\n");
 				
 				
 			}
+			System.out.println("End of clock cycle #" + (this.clock+1));
+			System.out.println("-------------------------------------\n\n");
 			this.clock++;
 		}
+		
+		//print register files
+		System.out.println(this.reg_file.print() + "\n###################\n");
+		// memory
+		System.out.println(this.data_memory.print() + "\n###################\n");
+		// total number of cycles
+		System.out.println("Total Number of Clock cycles: " + (this.clock+1) + "\n###################\n\n");
+		System.out.println("END OF SIMULATION");
 
 	}
 
@@ -112,7 +135,7 @@ public class Program {
 		this.if_id.setNextPC(this.pc + 1);
 
 		System.out.println(this.if_id.print());
-		System.out.println("__________________________________________");
+		System.out.println("________________________\n");
 
 	}
 
@@ -336,7 +359,7 @@ public class Program {
 		}
 
 		System.out.println(this.id_ex.print());
-		System.out.println("__________________________________________");
+		System.out.println("________________________\n");
 
 	}
 
@@ -382,7 +405,7 @@ public class Program {
 		this.ex_mem.setZero(this.alu.getZero());
 
 		System.out.println(this.ex_mem.print());
-		System.out.println("__________________________________________");
+		System.out.println("________________________\n");
 
 	}
 
@@ -404,7 +427,7 @@ public class Program {
 		this.pcsrc = this.alu.getZero() & this.ex_mem.getPCSrc();
 
 		System.out.println(this.mem_wb.print());
-		System.out.println("__________________________________________");
+		System.out.println("________________________\n");
 
 	}
 
@@ -415,7 +438,7 @@ public class Program {
 
 		this.reg_file.setRegWrite(this.mem_wb.getRegWrite());
 
-		System.out.println("*________________________________________* \n");
+		//System.out.println("*________________________________________* \n");
 
 	}
 
@@ -428,7 +451,4 @@ public class Program {
 		return v2;
 	}
 
-	public static void main(String[] agrs) {
-
-	}
 }

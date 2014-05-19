@@ -55,15 +55,14 @@ public class MEM_WB {
 	
 	//public String printMem_Wbcontents() {
 	public String print() {
-		String wbControlSignals = "RegWrite: " + this.wb[0] + ", MemToReg: "
+		String wbControlSignals = "	RegWrite: " + this.wb[0] + "		MemToReg: "
 				+ this.wb[1];
 
-		String allControlSignals = "MEM/WB contents:\n " + wbControlSignals
-				+ ", ";
+		String allControlSignals = "MEM/WB contents:\n " + wbControlSignals;
 
-		String restOfContents = "\n ReadData: " + this.read_Data
-				+ ", ALUresult: " + this.alu_Result + ", ALUresult: "
-				+ ", Mux3output: " + this.mux3Output;
+		String restOfContents = "\n	Read Data: " + this.read_Data
+				+ "		ALU result: " + this.alu_Result 
+				+ "		rd/rt register: " + this.mux3Output;
 
 		return (allControlSignals + restOfContents);
 	}

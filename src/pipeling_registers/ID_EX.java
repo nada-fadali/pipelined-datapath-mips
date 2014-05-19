@@ -147,22 +147,22 @@ public class ID_EX {
 	
 	//public String printId_Excontents() {
 	public String print(){
-		String wbControlSignals = "RegWrite: " + this.wb[0] + ", MemToReg: "
+		String wbControlSignals = "	RegWrite: " + this.wb[0] + "		MemToReg: "
 				+ this.wb[1];
 
-		String mControlSignals = "MemRead: " + this.m[0] + ", MemWrite: "
-				+ this.m[1] + ", PCSrc: " + this.m[2];
+		String mControlSignals = "MemRead: " + this.m[0] + "		MemWrite: "
+				+ this.m[1] + "		Branch: " + this.m[2];
 
-		String exControlSignals = "ALUSrc: " + this.ex[0] + ", ALUOp: "
-				+ this.ex[1] + ", RegDst: " + this.ex[2];
+		String exControlSignals = "ALUSrc: " + this.ex[0] + "		ALUOp: "
+				+ this.ex[1] + "		RegDst: " + this.ex[2];
 
 		String allControlSignals = "ID/Ex contents:\n " + wbControlSignals
-				+ ", " + mControlSignals + ", " + exControlSignals;
+				+ "\n	" + mControlSignals + "\n	" + exControlSignals;
 
-		String restOfContents = "\n nextPc: " + this.nextPC + ", ReadData1: "
-				+ this.readData1 + ", ReadData2: " + this.readData2
-				+ ", Extend: " + this.getExtend() + ", rt: "
-				+ this.getRt() + ", rd: " + this.getRd();
+		String restOfContents = "\n\n	Next Address: " + this.nextPC + "\n	Read Data1: "
+				+ this.readData1 + "		Read Data2: " + this.readData2
+				+ "\n	Extend: " + this.getExtend() + "\n	rt: "
+				+ this.getRt() + "		rd: " + this.getRd();
 
 		return (allControlSignals + restOfContents);
 	}

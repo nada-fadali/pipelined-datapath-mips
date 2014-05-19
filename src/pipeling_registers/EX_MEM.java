@@ -111,18 +111,19 @@ public class EX_MEM {
 	
 	//public String printEx_Memcontents() {
 	public String print() {
-		String wbControlSignals = "RegWrite: " + this.wb[0] + ", MemToReg: "
+		String wbControlSignals = "	RegWrite: " + this.wb[0] + "		MemToReg: "
 				+ this.wb[1];
 
-		String mControlSignals = "MemRead: " + this.m[0] + ", MemWrite: "
-				+ this.m[1] + ", PCSrc: " + this.m[2];
+		String mControlSignals = "MemRead: " + this.m[0] + "		MemWrite: "
+				+ this.m[1] + "		Branch: " + this.m[2]; //pcsrc
 
-		String allControlSignals = "EX/MEM contents:\n " + wbControlSignals
-				+ ", " + mControlSignals + ", ";
+		String allControlSignals = "EX/MEM contents:\n" + wbControlSignals
+				+ "\n\n"
+				+ "	" + mControlSignals + "\n	";
 
-		String restOfContents = "\n AdderOutput: " + this.adderOutput
-				+ ", Zero: " + this.zero + ", ALUresult: " + this.aluResult
-				+ ", ReadData2: " + this.readData2 + ", Mux3output: "
+		String restOfContents = "\n	Next address: " + this.adderOutput
+				+ "\n	Zero: " + this.zero + "		ALU result: " + this.aluResult
+				+ "\n	Read Data2: " + this.readData2 + "\n	rd/rt register: "
 				+ this.mux3Output;
 
 		return (allControlSignals + restOfContents);

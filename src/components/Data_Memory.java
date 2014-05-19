@@ -41,5 +41,16 @@ public class Data_Memory {
 			return -1;
 	}
 	
+	public void setData(ArrayList<String> data){
+		
+	}
+	
+	public String print(){
+		String s  = "Data Memory Content:\n";
+		for(int i = 0; i < this.memory.size(); i++){
+			s += "	Location #" + i + ": " + this.memory.get(i) + "/" + Integer.toHexString(this.memory.get(i)) + "\n";
+		}
+		return s;
+	}
 	
 }

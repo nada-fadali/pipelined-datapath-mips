@@ -71,7 +71,7 @@ public class ALU {
 		case "nor":
 			this.data1 = Integer.parseInt(Integer.toBinaryString(this.data1));
 			this.data2 = Integer.parseInt(Integer.toBinaryString(this.data2));
-
+			this.result = -~(this.data1 | this.data2);
 			break;
 		case "slt":
 		case "sltu":
@@ -97,9 +97,9 @@ public class ALU {
 
 
 	public static void main(String[] args) {
-		int x = 7;
-		int y = 4;
-		//System.out.println(-~(x | y));
+		int x = 11;
+		//int y = 4;
+		System.out.println(Integer.toHexString(x));
 	}
 
 }

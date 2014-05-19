@@ -21,13 +21,15 @@ public class Registers_File {
 		//this.read_Reg1 = Integer.parseInt(reg.substring(1, reg.length() - 1));
 		//^ that case handled in Instruction_Memory
 		//System.out.println(reg);
-		this.read_Reg1 = Integer.parseInt(reg);
+		if(!reg.equals("0"))
+			this.read_Reg1 = Integer.parseInt(reg);
 	}
 
 	public void setRead_Reg2(String reg) {
 		//this.read_Reg2 = Integer.parseInt(reg.substring(1, reg.length() - 1));
 		//^ that case handled in Instruction_Memory		
-		this.read_Reg2 = Integer.parseInt(reg);
+		if(!reg.equals("0"))
+			this.read_Reg2 = Integer.parseInt(reg);
 	}
 
 
@@ -66,5 +68,14 @@ public class Registers_File {
 	
 	public void setRa(int value){
 		this.registers[32] = value;
+	}
+	
+	public String print(){
+		String s = "Register File Content:\n";
+		for(int i = 0; i < this.registers.length-1; i++){
+			s += "	Reg #" + i + ": " + this.registers[i] + "/" + Integer.toHexString(this.registers[i]) + "\n";
+		}
+		s += "	Reg #Ra: " + this.registers[32] + "/" + Integer.toHexString(this.registers[32]);
+		return s;
 	}
 }
