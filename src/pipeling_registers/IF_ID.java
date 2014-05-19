@@ -36,7 +36,7 @@ public class IF_ID {
 		for (int i = 0; i < this.instruction.length; i++)
 			s += this.instruction[i] + "|";
 		return ("IF/ID contents:\n"
-				+ "	Next Address = " + this.nextPC + "\n"
+				+ "	NextPc = " + this.nextPC + "\n"
 						+ "	instruction: " + s);
 	}
 }

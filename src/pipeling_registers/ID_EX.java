@@ -159,7 +159,7 @@ public class ID_EX {
 		String allControlSignals = "ID/Ex contents:\n " + wbControlSignals
 				+ "\n	" + mControlSignals + "\n	" + exControlSignals;
 
-		String restOfContents = "\n\n	Next Address: " + this.nextPC + "\n	Read Data1: "
+		String restOfContents = "\n\n	NextPc: " + this.nextPC + "\n	Read Data1: "
 				+ this.readData1 + "		Read Data2: " + this.readData2
 				+ "\n	Extend: " + this.getExtend() + "\n	rt: "
 				+ this.getRt() + "		rd: " + this.getRd();

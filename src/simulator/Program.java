@@ -103,13 +103,12 @@ public class Program {
 					break;
 				default:
 					break;
-				}
-				// print control signals that not part of the pipeline registers
-				System.out.println("Control Signals:\n"
-						+ "	PCSrc: " + this.pcsrc + "\n");
-				
-				
+				}	
 			}
+			// print control signals that not part of the pipeline registers
+			System.out.println("Control Signals:\n"
+					+ "	PCSrc: " + this.pcsrc + "\n");
+			
 			System.out.println("End of clock cycle #" + (this.clock+1));
 			System.out.println("-------------------------------------\n\n");
 			this.clock++;
@@ -120,7 +119,7 @@ public class Program {
 		// memory
 		System.out.println(this.data_memory.print() + "\n###################\n");
 		// total number of cycles
-		System.out.println("Total Number of Clock cycles: " + (this.clock+1) + "\n###################\n\n");
+		System.out.println("Total Number of Clock cycles: " + (this.clock) + "\n###################\n\n");
 		System.out.println("END OF SIMULATION");
 
 	}
@@ -173,7 +172,7 @@ public class Program {
 
 			this.id_ex.setExtend(-1);
 
-			this.id_ex.setRt(this.reg_file.getRead_Data2());
+			this.id_ex.setRt(-1);
 			this.id_ex.setRd(Integer.parseInt(tmp[1])); // rd
 
 			// part 2 of the stage
@@ -201,7 +200,7 @@ public class Program {
 
 			// wb
 			this.id_ex.setRegWrite(1);
-			this.id_ex.setMemToReg(0);
+			this.id_ex.setMemToReg(1);
 			// m
 			this.id_ex.setMemRead(0);
 			this.id_ex.setMemWrite(0);
@@ -443,6 +442,9 @@ public class Program {
 		this.reg_file.setWrite_Reg(this.mem_wb.getMux3Output());
 		this.reg_file.setWrite_Data(mux(this.mem_wb.getRead_Data(),
 				this.mem_wb.getAlu_Result(), this.mem_wb.getMemToReg()));
+
+		System.out.println("________________________\n");
+		
 
 	}
 
