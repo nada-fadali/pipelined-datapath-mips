@@ -38,7 +38,7 @@ public class Registers_File {
 
 	public void setWrite_Data(int data) {
 		if(regWrite == 1)
-			this.registers[this.write_Reg] = write_Data;
+			this.registers[this.write_Reg] = data;
 	}
 
 

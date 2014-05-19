@@ -182,7 +182,7 @@ public class Program {
 			// control signals
 			// wb
 			this.id_ex.setRegWrite(1);
-			this.id_ex.setMemToReg(0);
+			this.id_ex.setMemToReg(1);
 			// m
 			this.id_ex.setMemRead(0);
 			this.id_ex.setMemWrite(0);
@@ -262,7 +262,7 @@ public class Program {
 		}
 
 		else if (tmp[0].equalsIgnoreCase("lw")) {
-
+			//w
 			this.id_ex.setRegWrite(1);
 			this.id_ex.setMemToReg(0);
 			// m
@@ -392,7 +392,7 @@ public class Program {
 		// reg_file read_data2
 		// Immediate value/i_instruction
 		// selector: AluSrc
-		this.alu.setData2(mux(this.reg_file.getRead_Data2(),
+		this.alu.setData2(mux(this.id_ex.getReadData2(),
 				this.id_ex.getExtend(), this.id_ex.getALUSrc()));
 
 		// alu control
@@ -443,10 +443,6 @@ public class Program {
 		this.reg_file.setWrite_Reg(this.mem_wb.getMux3Output());
 		this.reg_file.setWrite_Data(mux(this.mem_wb.getRead_Data(),
 				this.mem_wb.getAlu_Result(), this.mem_wb.getMemToReg()));
-
-		
-
-		//System.out.println("*________________________________________* \n");
 
 	}
 
