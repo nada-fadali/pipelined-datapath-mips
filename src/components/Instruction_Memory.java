@@ -37,12 +37,13 @@ public class Instruction_Memory {
 		/* M */
 		case "lw":
 		case "sw":
+			
 			this.instruction_mem[i][0] = tmp[0]; // lw or sw
 			this.instruction_mem[i][1] = tmp[1].substring(1); // r1
 
-			tmp = tmp[2].split("(");
+			tmp = tmp[2].split("\\(");
 			this.instruction_mem[i][3] = tmp[0]; // offset
-			this.instruction_mem[i][2] = tmp[1].substring(1); // r2
+			this.instruction_mem[i][2] = tmp[1].substring(1, tmp[1].length()-1); // r2
 			break;
 		/* R */
 		case "add":

@@ -82,23 +82,23 @@ public class Program {
 			for (int i = 0; i < pipeline.length; i++) {
 				switch (pipeline[i][this.clock]) {
 				case 10:
-					//System.out.println("IF");
+					System.out.println("IF");
 					this.fetch();
 					break;
 				case 20:
-					//System.out.println("ID");
+					System.out.println("ID");
 					this.decode();
 					break;
 				case 30:
-					//System.out.println("EX");
+					System.out.println("EX");
 					this.exec();
 					break;
 				case 40:
-					//System.out.println("MEM");
+					System.out.println("MEM");
 					this.mem();
 					break;
 				case 50:
-					//System.out.println("WB");
+					System.out.println("WB");
 					this.wb();
 					break;
 				default:
@@ -264,7 +264,7 @@ public class Program {
 		else if (tmp[0].equalsIgnoreCase("lw")) {
 
 			this.id_ex.setRegWrite(1);
-			this.id_ex.setMemToReg(1);
+			this.id_ex.setMemToReg(0);
 			// m
 			this.id_ex.setMemRead(1);
 			this.id_ex.setMemWrite(0);
@@ -279,14 +279,14 @@ public class Program {
 			// this.reg_file.setRead_Reg1((this.if_id.getInstruction()[2]).substring(beginIndex,
 			// endIndex));
 
-			this.reg_file.setRead_Reg1(tmp[1]); // rs
+			this.reg_file.setRead_Reg1(tmp[2]); // rs
 			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
 
 			this.id_ex.setReadData2(-1);
 
 			this.id_ex.setExtend(Integer.parseInt(tmp[3])); // offset
 
-			this.id_ex.setRt(Integer.parseInt((tmp[2]))); // rt
+			this.id_ex.setRt(Integer.parseInt((tmp[1]))); // rt
 
 			this.id_ex.setRd(-1);
 		}
@@ -306,15 +306,16 @@ public class Program {
 
 			// this.id_ex.setNextPC(this.if_id.getNextPC());
 
-			this.reg_file.setRead_Reg1(tmp[2]); // rs
+			this.reg_file.setRead_Reg1(tmp[2]); // reg has the address to be added to offset
 			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
-
-			this.id_ex.setReadData2(-1);
+			
+			this.reg_file.setRead_Reg2(tmp[1]);	//reg has the actuall data to be written in the memory
+			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
 
 			this.id_ex.setExtend(Integer.parseInt(tmp[3])); // offset
-
-			this.id_ex.setRt(Integer.parseInt((tmp[1]))); // rt
-
+			
+			
+			this.id_ex.setRt(-1); // rt
 			this.id_ex.setRd(-1);
 		}
 
@@ -381,9 +382,11 @@ public class Program {
 		// this.ex_mem.setAdderOutput(this.id_ex.getNextPC() + 3);
 		// update: case handeled
 		this.ex_mem.setAdderOutput(this.id_ex.getExtend());
+		
 
 		// set alu data1 by read_data1 from reg_file
 		this.alu.setData1(this.id_ex.getReadData1());
+		
 
 		// set alu data2 by output from mux between
 		// reg_file read_data2
@@ -395,12 +398,16 @@ public class Program {
 		// alu control
 		// calculate the operation and pass it to alu
 		// run alu
-		this.alu.run(this.id_ex.getOp());
+		this.ex_mem.setAluResult(this.alu.run(this.id_ex.getOp()));
+		
 
 		// mux 3
 		this.ex_mem.setMux3Output(mux(this.id_ex.getRt(), this.id_ex.getRd(),
 				this.id_ex.getRegDst()));
-
+		
+		//	write data to the memory
+		this.ex_mem.setReadData2(this.id_ex.getReadData2());
+		
 		// zero signal
 		this.ex_mem.setZero(this.alu.getZero());
 
@@ -414,12 +421,12 @@ public class Program {
 		// wb
 		this.mem_wb.setRegWrite(this.ex_mem.getRegWrite());
 		this.mem_wb.setMemToReg(this.ex_mem.getMemToReg());
-
+		
+		this.data_memory.setMemRead(this.id_ex.getMemRead()); //control signal
+		this.data_memory.setMemWrite(this.id_ex.getMemWrite());	//control signal;
 		this.data_memory.setAddress(this.ex_mem.getAluResult());
 		this.data_memory.setWrite_Data(this.ex_mem.getReadData2());
-		this.data_memory.setMemRead(this.id_ex.getMemRead());
-		this.data_memory.setMemWrite(this.id_ex.getMemWrite());
-
+		
 		this.mem_wb.setMux3Output(this.ex_mem.getMux3Output());
 		this.mem_wb.setAlu_Result(this.ex_mem.getAluResult());
 		this.mem_wb.setRead_Data(this.data_memory.getRead_Data());
@@ -432,11 +439,12 @@ public class Program {
 	}
 
 	private void wb() {
+		this.reg_file.setRegWrite(this.mem_wb.getRegWrite());
 		this.reg_file.setWrite_Reg(this.mem_wb.getMux3Output());
 		this.reg_file.setWrite_Data(mux(this.mem_wb.getRead_Data(),
-				this.ex_mem.getAluResult(), this.mem_wb.getMemToReg()));
+				this.mem_wb.getAlu_Result(), this.mem_wb.getMemToReg()));
 
-		this.reg_file.setRegWrite(this.mem_wb.getRegWrite());
+		
 
 		//System.out.println("*________________________________________* \n");
 

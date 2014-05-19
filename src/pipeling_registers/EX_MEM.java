@@ -121,7 +121,7 @@ public class EX_MEM {
 				+ "\n\n"
 				+ "	" + mControlSignals + "\n	";
 
-		String restOfContents = "\n	Next address: " + this.adderOutput
+		String restOfContents = "\n	Extend: " + this.adderOutput
 				+ "\n	Zero: " + this.zero + "		ALU result: " + this.aluResult
 				+ "\n	Read Data2: " + this.readData2 + "\n	rd/rt register: "
 				+ this.mux3Output;

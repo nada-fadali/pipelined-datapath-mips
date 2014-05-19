@@ -89,6 +89,10 @@ public class ALU {
 		case "bne":
 			this.zero = (this.data1 != this.data2) ? 1 : 0;
 			break;
+		case "lw":
+		case "sw":
+			this.result = this.data1 + this.data2;
+			break;
 		}
 
 		return this.result;

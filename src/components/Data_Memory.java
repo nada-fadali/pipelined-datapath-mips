@@ -49,6 +49,7 @@ public class Data_Memory {
 	public void setData(ArrayList<String> data) {
 		for(int i = 0; i < data.size(); i++){
 			String[] s = data.get(i).split("/");
+			//System.out.println(s[0] + " " + s[1]);
 			this.memory.put(Integer.parseInt(s[0]), Integer.parseInt(s[1]));
 		}
 	}

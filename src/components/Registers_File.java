@@ -21,26 +21,24 @@ public class Registers_File {
 		//this.read_Reg1 = Integer.parseInt(reg.substring(1, reg.length() - 1));
 		//^ that case handled in Instruction_Memory
 		//System.out.println(reg);
-		if(!reg.equals("0"))
-			this.read_Reg1 = Integer.parseInt(reg);
+		this.read_Reg1 = Integer.parseInt(reg);
 	}
 
 	public void setRead_Reg2(String reg) {
 		//this.read_Reg2 = Integer.parseInt(reg.substring(1, reg.length() - 1));
 		//^ that case handled in Instruction_Memory		
-		if(!reg.equals("0"))
-			this.read_Reg2 = Integer.parseInt(reg);
+		this.read_Reg2 = Integer.parseInt(reg);
 	}
 
 
 	public void setWrite_Reg(int write_Reg) {
-		this.write_Reg = write_Reg;
+		if(write_Reg != 0)
+			this.write_Reg = write_Reg;
 	}
 
 	public void setWrite_Data(int data) {
-		//this.write_Data = write_Data;
-		if(this.regWrite == 1)
-			this.registers[this.write_Reg] = data;
+		if(regWrite == 1)
+			this.registers[this.write_Reg] = write_Data;
 	}
 
 
@@ -51,11 +49,6 @@ public class Registers_File {
 
 	public int getRead_Data2() {
 		return this.registers[this.read_Data2];
-	}
-
-
-	public int getRegWrite() {
-		return regWrite;
 	}
 
 	public void setRegWrite(int regWrite) {
