@@ -94,7 +94,8 @@ public class ALU {
 			this.result = this.data1 + this.data2;
 			break;
 		}
-
+		
+		System.out.println("Alu RESULT:" + this.result);
 		return this.result;
 	}
 	

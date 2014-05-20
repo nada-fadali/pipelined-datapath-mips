@@ -32,13 +32,14 @@ public class Registers_File {
 
 
 	public void setWrite_Reg(int write_Reg) {
-		if(write_Reg != 0)
+		//if(write_Reg != 0)
 			this.write_Reg = write_Reg;
 	}
 
 	public void setWrite_Data(int data) {
 		if(regWrite == 1)
-			this.registers[this.write_Reg] = data;
+			if(this.write_Reg != 0)
+				this.registers[this.write_Reg] = data;
 	}
 
 
@@ -48,7 +49,7 @@ public class Registers_File {
 
 
 	public int getRead_Data2() {
-		return this.registers[this.read_Data2];
+		return this.registers[this.read_Reg2];
 	}
 
 	public void setRegWrite(int regWrite) {
