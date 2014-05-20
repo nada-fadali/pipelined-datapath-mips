@@ -105,6 +105,7 @@ public class Program {
 					break;
 				}	
 			}
+			
 			// print control signals that not part of the pipeline registers
 			System.out.println("Control Signals:\n"
 					+ "	PCSrc: " + this.pcsrc + "\n");
@@ -431,6 +432,9 @@ public class Program {
 		this.mem_wb.setRead_Data(this.data_memory.getRead_Data());
 
 		this.pcsrc = this.alu.getZero() & this.ex_mem.getPCSrc();
+		System.out.println("Zero signal: " + this.alu.getZero());
+		System.out.println("pcsrc: " + this.ex_mem.getPCSrc());
+		System.out.println(this.pcsrc);
 
 		System.out.println(this.mem_wb.print());
 		System.out.println("________________________\n");

@@ -11,24 +11,13 @@ public class ALU {
 
 	}
 
-	// getters & setters
-/*	public int getData1() {
-		return data1;
-	}
-*/
 	public void setData1(int data1) {
 		this.data1 = data1;
 	}
-/*
-	public int getData2() {
-		return data2;
-	}*/
 
 	public void setData2(int data2) {
 		this.data2 = data2;
 	}
-	
-	
 
 	public String getOp() {
 		return op;
@@ -58,19 +47,13 @@ public class ALU {
 			break;
 		case "and":
 		case "andi":
-			this.data1 = Integer.parseInt(Integer.toBinaryString(this.data1));
-			this.data2 = Integer.parseInt(Integer.toBinaryString(this.data2));
 			this.result = this.data1 & this.data2;
 			break;
 		case "or":
 		case "ori":
-			this.data1 = Integer.parseInt(Integer.toBinaryString(this.data1));
-			this.data2 = Integer.parseInt(Integer.toBinaryString(this.data2));
 			this.result = this.data1 | this.data2;
 			break;
 		case "nor":
-			this.data1 = Integer.parseInt(Integer.toBinaryString(this.data1));
-			this.data2 = Integer.parseInt(Integer.toBinaryString(this.data2));
 			this.result = -~(this.data1 | this.data2);
 			break;
 		case "slt":
@@ -94,11 +77,8 @@ public class ALU {
 			this.result = this.data1 + this.data2;
 			break;
 		}
-		
-		System.out.println("Alu RESULT:" + this.result);
+
 		return this.result;
 	}
-	
-
 
 }
