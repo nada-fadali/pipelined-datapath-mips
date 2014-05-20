@@ -91,14 +91,10 @@ public class Instruction_Memory {
 			break;
 		/* Label case */
 		default:
-			//System.out.println(tmp[0]);
-			
 			this.labels.add(tmp[0] + "|" + i); // adds label and it's index in
-			// concat the instruction
 			String s = "";
 			for(int k = 1; k < tmp.length; k++)
-				s += tmp[k] + " ";
-			//System.out.println(s);	
+				s += tmp[k] + " ";	
 			this.intializeInstruction(s, i);
 		}
 
