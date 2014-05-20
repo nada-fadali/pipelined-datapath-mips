@@ -169,11 +169,7 @@ public class Program {
 
 			this.reg_file.setRead_Reg2(tmp[3]); // rt
 			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
-			System.out.println("rs " + tmp[2]);
-			System.out.println("rt " + tmp[3]);
-			System.out.println("IDEX read data one " + this.id_ex.getReadData1());
-			System.out.println("IDEX read data two " + this.id_ex.getReadData2());
-
+			
 			this.id_ex.setExtend(-1);
 
 			this.id_ex.setRt(-1);

@@ -14,15 +14,12 @@ public class Instruction_Memory {
 		this.instruction_mem = new String[20][4];
 		// this.instructionsNumber = instructions.size();
 		// System.out.println(this.instructionsNumber);
+		this.labels = new ArrayList<String>();
 
 		for (int i = 0; i < instructions.size(); i++) {
 			this.intializeInstruction(instructions.get(i), i);
 		}
 	}
-
-	/*
-	 * public int getInstructionsNumber(){ return this.instructionsNumber; }
-	 */
 
 	/*
 	 * Helper Method
@@ -94,8 +91,15 @@ public class Instruction_Memory {
 			break;
 		/* Label case */
 		default:
+			//System.out.println(tmp[0]);
+			
 			this.labels.add(tmp[0] + "|" + i); // adds label and it's index in
-			this.intializeInstruction(tmp[1], i);
+			// concat the instruction
+			String s = "";
+			for(int k = 1; k < tmp.length; k++)
+				s += tmp[k] + " ";
+			//System.out.println(s);	
+			this.intializeInstruction(s, i);
 		}
 
 	}
