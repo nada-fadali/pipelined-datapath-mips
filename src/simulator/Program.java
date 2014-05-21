@@ -35,6 +35,10 @@ public class Program {
 	private boolean dontFetch;
 	private int bc;
 	
+	// for ending simulation
+	private boolean end;
+	private int ec;
+	
 	/*
 	 * Constructor
 	 */
@@ -46,6 +50,9 @@ public class Program {
 		this.instructCount = instructions.size();
 		this.dontFetch = false;
 		this.bc = 0;
+		
+		this.end = false;
+		this.ec = 0;
 	
 
 		this.stAdd = address;
@@ -67,48 +74,71 @@ public class Program {
 	}
 
 	public void run() {
+		System.out.println("START OF SIMULATION\n\n");
 		
-		while(true){
-			System.out.println("START OF SIMULATION\n\n");
+		while(ec < 5){
+
+			if(this.pc > this.instructCount-2)
+				end = true;
+			
+			
 			System.out.println("Clock cycle #" + (this.clock+1) );
 			
-			if(this.mem_wb.state() && this.pc != this.instructCount)
+			if(this.mem_wb.state() && this.pc <= this.instructCount){
+				System.out.println("*** WB ****");
 				this.wb();
-			else
-				break; //end simulation
-			
-			if(this.ex_mem.state())
+				if(end && ec == 4)
+					ec++;	
+			}
+					
+			if(this.ex_mem.state()){
+				System.out.println("*** MEM ****");
 				this.mem();
+				if(end && ec == 3){
+					ec++;
+					this.ex_mem.setState(false);
+				}
+			}
 			
-			if(this.id_ex.state())
+			if(this.id_ex.state()){
+				System.out.println("*** EX ****");
 				this.exec();
+				if(end && ec == 2){
+					ec++;
+					this.id_ex.setState(false);
+				}
+			}
 		
-			if(this.if_id.state())
+			if(this.if_id.state()){
+				System.out.println("*** ID ****");
 				this.decode();
+				if(end && ec == 1) {
+					ec++;
+					this.if_id.setState(false);
+				}
+			}
 			
-			if(this.pc <= this.instructCount && !dontFetch || bc == 5)
-				this.fetch();
+			if(!end && (!dontFetch || bc == 5)){
+					System.out.println("*** IF ****");
+					this.fetch();
+					if(this.pc > this.instructCount-2){
+						end = true;
+						if(ec == 0)
+							ec++;
+					}
+				}
 			
 			
+			System.out.println("EC is " + ec);
+			System.out.println(end);
 			// print control signals that not part of the pipeline registers
 			System.out.println("Control Signals:\n"
 					+ "	PCSrc: " + this.pcsrc + "\n");
-			
-			this.clock++;
 			System.out.println("End of clock cycle #" + (this.clock+1));
 			System.out.println("-------------------------------------\n\n");
+			this.clock++;
 		}
-		
-		
-		
-		System.out.println("START OF SIMULATION\n\n");
-		System.out.println("Clock cycle #" + (this.clock+1) );
-		// print control signals that not part of the pipeline registers
-		System.out.println("Control Signals:\n"
-				+ "	PCSrc: " + this.pcsrc + "\n");
-		System.out.println("End of clock cycle #" + (this.clock+1));
-		System.out.println("-------------------------------------\n\n");
-	
+			
 			
 		//print register files
 		System.out.println(this.reg_file.print() + "\n###################\n");
@@ -138,7 +168,7 @@ public class Program {
 			bc++;
 		}
 		
-		this.id_ex.setState(true);
+		this.if_id.setState(true);
 
 	}
 
