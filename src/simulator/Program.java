@@ -29,9 +29,11 @@ public class Program {
 	// See description -> Simulator Inputs Sections
 	private int stAdd; 
 	
+	// =============== Branching Case ================
 	//	number of instructions
 	private int instructCount;
 	private boolean dontFetch;
+	private int bc;
 	
 	/*
 	 * Constructor
@@ -39,8 +41,11 @@ public class Program {
 	public Program(ArrayList<String> instructions, ArrayList<String> data, int address) {
 		this.pc = -1;
 		this.clock = 0;
+		
+		// =============== Branching Case ================
 		this.instructCount = instructions.size();
 		this.dontFetch = false;
+		this.bc = 0;
 	
 
 		this.stAdd = address;
@@ -81,7 +86,7 @@ public class Program {
 			if(this.if_id.state())
 				this.decode();
 			
-			if(this.pc <= this.instructCount && !dontFetch)
+			if(this.pc <= this.instructCount && !dontFetch || bc == 5)
 				this.fetch();
 			
 			
@@ -121,14 +126,17 @@ public class Program {
 
 		// fetch line
 		this.if_id.setInstruction(this.instruct_mem.getInstruction(this.pc));
-		
-		if(this.if_id.getInstruction()[0].equals("bne") || this.if_id.getInstruction()[0].equals("beq"))
-			dontFetch = true;
 
 		this.if_id.setNextPC(this.pc + 1);
 
 		System.out.println(this.if_id.print());
 		System.out.println("________________________\n");
+		
+		// =============== Branching Case ================
+		if(this.if_id.getInstruction()[0].equals("bne") || this.if_id.getInstruction()[0].equals("beq")){
+			dontFetch = true;
+			bc++;
+		}
 		
 		this.id_ex.setState(true);
 
@@ -255,7 +263,9 @@ public class Program {
 			this.id_ex.setRt(-1);
 			this.id_ex.setRd(-1);
 			
+			// =============== Branching Case ================
 			this.dontFetch = true;
+			bc++;
 		}
 
 		else if (tmp[0].equalsIgnoreCase("lw")) {
@@ -355,7 +365,9 @@ public class Program {
 				break;
 			}
 			
+			// =============== Branching Case ================
 			this.dontFetch = true;
+			bc++;
 		}
 
 		System.out.println(this.id_ex.print());
@@ -401,10 +413,6 @@ public class Program {
 		// run alu
 		this.ex_mem.setAluResult(this.alu.run(this.id_ex.getOp()));
 		
-		
-		if(this.id_ex.getOp().equals("beq") || this.id_ex.getOp().equals("bne"))
-			this.if_id.setState(false);
-		
 
 		// mux 3
 		this.ex_mem.setMux3Output(mux(this.id_ex.getRt(), this.id_ex.getRd(),
@@ -419,7 +427,14 @@ public class Program {
 		System.out.println(this.ex_mem.print());
 		System.out.println("________________________\n");
 		
+		// =============== Branching Case ================
 		this.ex_mem.setState(true);
+
+		//if(this.id_ex.getOp().equals("beq") || this.id_ex.getOp().equals("bne"))
+		if(this.ex_mem.getPCSrc() == 1){
+			this.if_id.setState(false);
+			bc++;
+		}
 		
 
 	}
@@ -440,12 +455,15 @@ public class Program {
 		this.mem_wb.setRead_Data(this.data_memory.getRead_Data());
 
 		this.pcsrc = this.alu.getZero() & this.ex_mem.getPCSrc();
-		if(this.ex_mem.getPCSrc() == 1)
-			this.ex_mem.setState(false);
-		
 
 		System.out.println(this.mem_wb.print());
 		System.out.println("________________________\n");
+		
+		// =============== Branching Case ================
+		if(this.ex_mem.getPCSrc() == 1){
+			this.ex_mem.setState(false);
+			bc++;
+		}
 		
 		this.mem_wb.setState(true);
 	}
@@ -458,7 +476,11 @@ public class Program {
 
 		System.out.println("________________________\n");
 		
-		
+		// =============== Branching Case ================
+		if(this.pcsrc == 1)
+			bc++;
+		else
+			bc = 0;
 		
 
 	}
