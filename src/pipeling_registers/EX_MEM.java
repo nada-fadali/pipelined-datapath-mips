@@ -8,6 +8,7 @@ public class EX_MEM {
 	private int aluResult;
 	private int readData2;
 	private int mux3Output;
+	private boolean state;
 	
 	//keeps track of the operation of the instruction
 	private String op;
@@ -15,10 +16,18 @@ public class EX_MEM {
 	public EX_MEM() {
 		this.wb = new int[2];
 		this.m = new int[3];
+		this.state = false;
 
 	}
 
 	// getters & setters
+	public boolean state(){
+		return this.state;
+	}
+	public void setState(boolean s) {
+		this. state = s;
+	}
+	
 	public int getAdderOutput() {
 		return adderOutput;
 	}

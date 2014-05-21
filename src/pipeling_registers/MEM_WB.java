@@ -6,12 +6,22 @@ public class MEM_WB {
 	private int mux3Output;
 
 	private int[] wb;
+	
+	private boolean state;
 
 	public MEM_WB() {
 		this.wb = new int[2];
 	}
 
 	// getters & setters
+	public boolean state(){
+		return this.state;
+	}
+	
+	public void setState(boolean s){
+		this.state = s;
+	}
+	
 	public void setAlu_Result(int alu_Result) {
 		this.alu_Result = alu_Result;
 	}

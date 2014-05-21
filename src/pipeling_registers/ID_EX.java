@@ -12,6 +12,8 @@ public class ID_EX {
 	private int[] m;
 	private int[] ex;
 	
+	private boolean state;
+	
 	//keeps track of the operation of the instruction
 	private String op;
 
@@ -19,9 +21,18 @@ public class ID_EX {
 		this.wb = new int[2];
 		this.m = new int[3];
 		this.ex = new int[3];
+		this.state = false;
 	}
 
 	// getters & setters
+	public boolean state(){
+		return this.state;
+	}
+	
+	public void setState(boolean s){
+		this.state = s;
+	}
+	
 	public int getNextPC() {
 		return nextPC;
 	}

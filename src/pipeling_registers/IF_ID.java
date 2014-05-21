@@ -3,12 +3,21 @@ package pipeling_registers;
 public class IF_ID {
 	private int nextPC;
 	private String[] instruction;
+	
+	private boolean state;
 
 	public IF_ID() {
-		// this.nextPC = 5;
 		this.instruction = null;
+		this.state = false;
 	}
 
+	public boolean state(){
+		return this.state;
+	}
+	public void setState(boolean s){
+		this.state = s;
+	}
+	
 	public int getNextPC() {
 		return nextPC;
 	}

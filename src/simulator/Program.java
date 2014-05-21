@@ -10,9 +10,6 @@ public class Program {
 	private int clock;
 	private int pc;
 
-	// variables needed for the pipeline
-	private int[][] pipeline;
-
 	// components
 	private Instruction_Memory instruct_mem;
 	private Registers_File reg_file;
@@ -30,24 +27,21 @@ public class Program {
 
 	// input starting address from the user
 	// See description -> Simulator Inputs Sections
-	private int stAdd;
-
+	private int stAdd; 
+	
+	//	number of instructions
+	private int instructCount;
+	private boolean dontFetch;
+	
 	/*
 	 * Constructor
 	 */
 	public Program(ArrayList<String> instructions, ArrayList<String> data, int address) {
 		this.pc = -1;
-		// this.clock = 4 + instructions.size();
 		this.clock = 0;
-		
-		this.pipeline = new int[instructions.size()][4 + instructions.size()];
-		for (int i = 0; i < this.pipeline.length; i++) {
-			this.pipeline[i][i] = 10; //if
-			this.pipeline[i][i + 1] = 20; //id
-			this.pipeline[i][i + 2] = 30; //ex
-			this.pipeline[i][i + 3] = 40; //mem
-			this.pipeline[i][i + 4] = 50; //wb
-		}
+		this.instructCount = instructions.size();
+		this.dontFetch = false;
+	
 
 		this.stAdd = address;
 
@@ -68,53 +62,49 @@ public class Program {
 	}
 
 	public void run() {
-		/*
-		 * while (this.clock > 0) { this.fetch(); //this.decode();
-		 * //this.exec(); //this.mem(); this.wb(); //this.pc++;
-		 * //System.out.println(this.clock); this.clock--; } this.fetch();
-		 */
 		
-		System.out.println("START OF SIMULATION\n\n");
-
-		while (this.clock < this.pipeline[0].length) {
+		while(true){
+			System.out.println("START OF SIMULATION\n\n");
 			System.out.println("Clock cycle #" + (this.clock+1) );
 			
-			for (int i = 0; i < pipeline.length; i++) {
-				switch (pipeline[i][this.clock]) {
-				case 10:
-					System.out.println("IF");
-					this.fetch();
-					break;
-				case 20:
-					System.out.println("ID");
-					this.decode();
-					break;
-				case 30:
-					System.out.println("EX");
-					this.exec();
-					break;
-				case 40:
-					System.out.println("MEM");
-					this.mem();
-					break;
-				case 50:
-					System.out.println("WB");
-					this.wb();
-					break;
-				default:
-					break;
-				}	
-			}
+			if(this.mem_wb.state() && this.pc != this.instructCount)
+				this.wb();
+			else
+				break; //end simulation
+			
+			if(this.ex_mem.state())
+				this.mem();
+			
+			if(this.id_ex.state())
+				this.exec();
+		
+			if(this.if_id.state())
+				this.decode();
+			
+			if(this.pc <= this.instructCount && !dontFetch)
+				this.fetch();
+			
 			
 			// print control signals that not part of the pipeline registers
 			System.out.println("Control Signals:\n"
 					+ "	PCSrc: " + this.pcsrc + "\n");
 			
+			this.clock++;
 			System.out.println("End of clock cycle #" + (this.clock+1));
 			System.out.println("-------------------------------------\n\n");
-			this.clock++;
 		}
 		
+		
+		
+		System.out.println("START OF SIMULATION\n\n");
+		System.out.println("Clock cycle #" + (this.clock+1) );
+		// print control signals that not part of the pipeline registers
+		System.out.println("Control Signals:\n"
+				+ "	PCSrc: " + this.pcsrc + "\n");
+		System.out.println("End of clock cycle #" + (this.clock+1));
+		System.out.println("-------------------------------------\n\n");
+	
+			
 		//print register files
 		System.out.println(this.reg_file.print() + "\n###################\n");
 		// memory
@@ -131,11 +121,16 @@ public class Program {
 
 		// fetch line
 		this.if_id.setInstruction(this.instruct_mem.getInstruction(this.pc));
+		
+		if(this.if_id.getInstruction()[0].equals("bne") || this.if_id.getInstruction()[0].equals("beq"))
+			dontFetch = true;
 
 		this.if_id.setNextPC(this.pc + 1);
 
 		System.out.println(this.if_id.print());
 		System.out.println("________________________\n");
+		
+		this.id_ex.setState(true);
 
 	}
 
@@ -259,6 +254,8 @@ public class Program {
 
 			this.id_ex.setRt(-1);
 			this.id_ex.setRd(-1);
+			
+			this.dontFetch = true;
 		}
 
 		else if (tmp[0].equalsIgnoreCase("lw")) {
@@ -357,10 +354,14 @@ public class Program {
 				this.id_ex.setExtend(this.reg_file.getRa());
 				break;
 			}
+			
+			this.dontFetch = true;
 		}
 
 		System.out.println(this.id_ex.print());
 		System.out.println("________________________\n");
+		
+		this.id_ex.setState(true);
 
 	}
 
@@ -400,6 +401,10 @@ public class Program {
 		// run alu
 		this.ex_mem.setAluResult(this.alu.run(this.id_ex.getOp()));
 		
+		
+		if(this.id_ex.getOp().equals("beq") || this.id_ex.getOp().equals("bne"))
+			this.if_id.setState(false);
+		
 
 		// mux 3
 		this.ex_mem.setMux3Output(mux(this.id_ex.getRt(), this.id_ex.getRd(),
@@ -413,6 +418,9 @@ public class Program {
 
 		System.out.println(this.ex_mem.print());
 		System.out.println("________________________\n");
+		
+		this.ex_mem.setState(true);
+		
 
 	}
 
@@ -432,13 +440,14 @@ public class Program {
 		this.mem_wb.setRead_Data(this.data_memory.getRead_Data());
 
 		this.pcsrc = this.alu.getZero() & this.ex_mem.getPCSrc();
-		System.out.println("Zero signal: " + this.alu.getZero());
-		System.out.println("pcsrc: " + this.ex_mem.getPCSrc());
-		System.out.println(this.pcsrc);
+		if(this.ex_mem.getPCSrc() == 1)
+			this.ex_mem.setState(false);
+		
 
 		System.out.println(this.mem_wb.print());
 		System.out.println("________________________\n");
-
+		
+		this.mem_wb.setState(true);
 	}
 
 	private void wb() {
@@ -448,6 +457,8 @@ public class Program {
 				this.mem_wb.getAlu_Result(), this.mem_wb.getMemToReg()));
 
 		System.out.println("________________________\n");
+		
+		
 		
 
 	}
