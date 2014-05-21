@@ -24,9 +24,6 @@ public class Program {
 	// control signals
 	private int pcsrc; // branch/jump signal
 
-	// input starting address from the user
-	private int startPC;
-
 	// =============== Branching Case ================
 	// number of instructions
 	private int instructCount;
@@ -41,21 +38,21 @@ public class Program {
 	 */
 	public Program(ArrayList<String> instructions, ArrayList<String> data,
 			int address) {
-		this.pc = -1;
+		this.pc = address - 1;
 		this.clock = 0;
 
 		// =============== Branching Case ================
-		this.instructCount = instructions.size();
+		this.instructCount = instructions.size() + address;
 		this.dontFetch = false;
 
+		System.out.println("initial pc " + this.pc);
+		System.out.println("initial count " + this.instructCount);
 		// =============== End Simulation Case ================
 		this.end = false;
 		this.ec = 0;
 
-		this.startPC = address;
-
 		// initialize component
-		this.instruct_mem = new Instruction_Memory(instructions);
+		this.instruct_mem = new Instruction_Memory(instructions, address);
 		this.reg_file = new Registers_File();
 		this.alu = new ALU();
 		this.data_memory = new Data_Memory();
@@ -75,7 +72,7 @@ public class Program {
 
 		while (ec < 5) {
 
-			if (this.pc > this.instructCount - 2)
+			if (this.pc > this.instructCount)
 				end = true;
 
 			System.out.println("Clock cycle #" + (this.clock + 1));
@@ -124,6 +121,8 @@ public class Program {
 			if (!end && (!dontFetch)) {
 				System.out.println("*** IF ****");
 				this.fetch();
+				System.out.println("new pc " + this.pc);
+				System.out.println("new count " + (this.instructCount - 1));
 				if (this.pc > this.instructCount - 2 && !dontFetch) {
 					end = true;
 					if (ec == 0)
@@ -151,7 +150,7 @@ public class Program {
 	}
 
 	private void fetch() {
-		// =============== Branching Case ================		
+		// =============== Branching Case ================
 		if (!dontFetch && ec == 4 && !end && this.pcsrc == 1)
 			ec = 0;
 		else
@@ -288,7 +287,6 @@ public class Program {
 
 			// =============== Branching Case ================
 			dontFetch = true;
-			// bc++;
 		}
 
 		else if (tmp[0].equalsIgnoreCase("lw")) {
@@ -388,7 +386,6 @@ public class Program {
 
 			// =============== Branching Case ================
 			this.dontFetch = true;
-			// bc++;
 		}
 
 		System.out.println(this.id_ex.print());
@@ -448,7 +445,6 @@ public class Program {
 		// =============== Branching Case ================
 		if (this.ex_mem.getPCSrc() == 1) {
 			this.if_id.setState(false);
-			// bc++;
 		}
 
 	}
