@@ -25,7 +25,7 @@ public class Data_Memory {
 	}
 
 	public void setWrite_Data(int data) {
-		if (this.memWrite == 1) // this.memory.set(this.address, data);
+		if (this.memWrite == 1) 
 			this.memory.put(address, data);
 	}
 
@@ -62,11 +62,6 @@ public class Data_Memory {
 		}
 		return s;
 	}
-	
-	/*public static void main(String[] args){
-		HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();
-		m.put(3, 100);
-		System.out.println("Memory size " + m.size());
-	}*/
+
 	
 }

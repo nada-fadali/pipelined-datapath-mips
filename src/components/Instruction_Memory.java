@@ -90,12 +90,13 @@ public class Instruction_Memory {
 			this.instruction_mem[i] = tmp;
 			break;
 		/* Label case */
-		default:
-			this.labels.add(tmp[0] + "|" + i); // adds label and it's index in
+		default:{
+			this.labels.add(tmp[0] + " " + i); // adds label and it's index in
 			String s = "";
 			for(int k = 1; k < tmp.length; k++)
 				s += tmp[k] + " ";	
 			this.intializeInstruction(s, i);
+			}
 		}
 
 	}
@@ -105,7 +106,7 @@ public class Instruction_Memory {
 	 */
 	private String getLabelAddress(String label) {
 		for (int i = 0; i < this.labels.size(); i++) {
-			String[] tmp = this.labels.get(i).split("|");
+			String[] tmp = this.labels.get(i).split(" ");
 			if (tmp[0].equals(label))
 				return tmp[1];
 		}

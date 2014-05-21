@@ -1,7 +1,6 @@
 package simulator;
 
 import java.util.ArrayList;
-
 import pipeling_registers.*;
 import components.*;
 
@@ -118,19 +117,25 @@ public class Program {
 				}
 			}
 			
-			if(!end && (!dontFetch || bc == 5)){
+			if(this.pcsrc == 1){
+				this.end = false;
+				dontFetch = false;
+				bc = 0;
+			}
+			if(!end && (!dontFetch || bc == 2)){
 					System.out.println("*** IF ****");
 					this.fetch();
-					if(this.pc > this.instructCount-2){
+					if(this.pc > this.instructCount-2 && !dontFetch){
 						end = true;
 						if(ec == 0)
 							ec++;
 					}
 				}
 			
-			
+			System.out.println("DON'T FETCH is " + dontFetch);
+			System.out.println("BC is " + bc);
 			System.out.println("EC is " + ec);
-			System.out.println(end);
+			System.out.println("END is " + end);
 			// print control signals that not part of the pipeline registers
 			System.out.println("Control Signals:\n"
 					+ "	PCSrc: " + this.pcsrc + "\n");
@@ -163,10 +168,6 @@ public class Program {
 		System.out.println("________________________\n");
 		
 		// =============== Branching Case ================
-		if(this.if_id.getInstruction()[0].equals("bne") || this.if_id.getInstruction()[0].equals("beq")){
-			dontFetch = true;
-			bc++;
-		}
 		
 		this.if_id.setState(true);
 
@@ -255,6 +256,7 @@ public class Program {
 			// this.reg_file.setRead_Reg2(tmp[3]); // immediate
 			// value
 			// this.id_ex.setExtend(this.reg_file.getRead_Data2());
+			
 			this.id_ex.setExtend(Integer.parseInt(tmp[3]));
 
 			this.id_ex.setRt(Integer.parseInt((tmp[1]))); // rt
@@ -287,14 +289,14 @@ public class Program {
 			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
 
 			// LABEL ADDRESS
-			// update: HANDELED
+			System.out.println("LABEL ADDRESS is " + tmp[3]);
 			this.id_ex.setExtend(Integer.parseInt(tmp[3]));
 
 			this.id_ex.setRt(-1);
 			this.id_ex.setRd(-1);
 			
 			// =============== Branching Case ================
-			this.dontFetch = true;
+			dontFetch = true;
 			bc++;
 		}
 
@@ -509,9 +511,10 @@ public class Program {
 		// =============== Branching Case ================
 		if(this.pcsrc == 1)
 			bc++;
-		else
+		else{
 			bc = 0;
-		
+			//end = false;
+		}
 
 	}
 
@@ -523,5 +526,6 @@ public class Program {
 			return v1;
 		return v2;
 	}
+	
 
 }
