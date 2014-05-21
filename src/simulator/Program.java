@@ -120,7 +120,7 @@ public class Program {
 			if(this.pcsrc == 1){
 				this.end = false;
 				dontFetch = false;
-				bc = 0;
+				//bc = 0;
 			}
 			if(!end && (!dontFetch || bc == 2)){
 					System.out.println("*** IF ****");
