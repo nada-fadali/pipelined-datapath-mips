@@ -76,6 +76,7 @@ public class ALU {
 		case "sw":
 			this.result = this.data1 + this.data2;
 			break;
+		
 		}
 
 		return this.result;

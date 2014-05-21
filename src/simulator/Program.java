@@ -25,44 +25,42 @@ public class Program {
 	private int pcsrc; // branch/jump signal
 
 	// input starting address from the user
-	// See description -> Simulator Inputs Sections
-	private int stAdd; 
-	
+	private int startPC;
+
 	// =============== Branching Case ================
-	//	number of instructions
+	// number of instructions
 	private int instructCount;
 	private boolean dontFetch;
-	private int bc;
-	
-	// for ending simulation
+
+	// =============== End Simulation Case ================
 	private boolean end;
 	private int ec;
-	
+
 	/*
 	 * Constructor
 	 */
-	public Program(ArrayList<String> instructions, ArrayList<String> data, int address) {
+	public Program(ArrayList<String> instructions, ArrayList<String> data,
+			int address) {
 		this.pc = -1;
 		this.clock = 0;
-		
+
 		// =============== Branching Case ================
 		this.instructCount = instructions.size();
 		this.dontFetch = false;
-		this.bc = 0;
-		
+
+		// =============== End Simulation Case ================
 		this.end = false;
 		this.ec = 0;
-	
 
-		this.stAdd = address;
+		this.startPC = address;
 
 		// initialize component
 		this.instruct_mem = new Instruction_Memory(instructions);
 		this.reg_file = new Registers_File();
 		this.alu = new ALU();
 		this.data_memory = new Data_Memory();
-		
-		if(data.size() > 0)
+
+		if (data.size() > 0)
 			this.data_memory.setData(data);
 
 		// initialize registers
@@ -74,88 +72,90 @@ public class Program {
 
 	public void run() {
 		System.out.println("START OF SIMULATION\n\n");
-		
-		while(ec < 5){
 
-			if(this.pc > this.instructCount-2)
+		while (ec < 5) {
+
+			if (this.pc > this.instructCount - 2)
 				end = true;
-			
-			
-			System.out.println("Clock cycle #" + (this.clock+1) );
-			
-			if(this.mem_wb.state() && this.pc <= this.instructCount){
+
+			System.out.println("Clock cycle #" + (this.clock + 1));
+
+			if (this.mem_wb.state() && this.pc <= this.instructCount) {
 				System.out.println("*** WB ****");
 				this.wb();
-				if(end && ec == 4)
-					ec++;	
+				if (end && ec == 4)
+					ec++;
 			}
-					
-			if(this.ex_mem.state()){
+
+			if (this.ex_mem.state()) {
 				System.out.println("*** MEM ****");
 				this.mem();
-				if(end && ec == 3){
+				if (end && ec == 3) {
 					ec++;
 					this.ex_mem.setState(false);
 				}
 			}
-			
-			if(this.id_ex.state()){
+
+			if (this.id_ex.state()) {
 				System.out.println("*** EX ****");
 				this.exec();
-				if(end && ec == 2){
+				if (end && ec == 2) {
 					ec++;
 					this.id_ex.setState(false);
 				}
 			}
-		
-			if(this.if_id.state()){
+
+			if (this.if_id.state()) {
 				System.out.println("*** ID ****");
 				this.decode();
-				if(end && ec == 1) {
+				if (end && ec == 1) {
 					ec++;
 					this.if_id.setState(false);
 				}
 			}
-			
-			if(this.pcsrc == 1){
+
+			if (this.pcsrc == 1) {
 				this.end = false;
 				dontFetch = false;
-				//bc = 0;
+				this.ex_mem.setState(false);
+				this.mem_wb.setState(false);
 			}
-			if(!end && (!dontFetch || bc == 2)){
-					System.out.println("*** IF ****");
-					this.fetch();
-					if(this.pc > this.instructCount-2 && !dontFetch){
-						end = true;
-						if(ec == 0)
-							ec++;
-					}
+
+			if (!end && (!dontFetch)) {
+				System.out.println("*** IF ****");
+				this.fetch();
+				if (this.pc > this.instructCount - 2 && !dontFetch) {
+					end = true;
+					if (ec == 0)
+						ec++;
 				}
-			
-			System.out.println("DON'T FETCH is " + dontFetch);
-			System.out.println("BC is " + bc);
-			System.out.println("EC is " + ec);
-			System.out.println("END is " + end);
-			// print control signals that not part of the pipeline registers
-			System.out.println("Control Signals:\n"
-					+ "	PCSrc: " + this.pcsrc + "\n");
-			System.out.println("End of clock cycle #" + (this.clock+1));
+			}
+
+			System.out.println("Control Signals:\n" + "	PCSrc: " + this.pcsrc
+					+ "\n");
+			System.out.println("End of clock cycle #" + (this.clock + 1));
 			System.out.println("-------------------------------------\n\n");
 			this.clock++;
 		}
-			
-			
-		//print register files
+
+		// print register files
 		System.out.println(this.reg_file.print() + "\n###################\n");
 		// memory
-		System.out.println(this.data_memory.print() + "\n###################\n");
+		System.out
+				.println(this.data_memory.print() + "\n###################\n");
 		// total number of cycles
-		System.out.println("Total Number of Clock cycles: " + (this.clock) + "\n###################\n\n");
+		System.out.println("Total Number of Clock cycles: " + (this.clock)
+				+ "\n###################\n\n");
 		System.out.println("END OF SIMULATION");
 
 	}
 
 	private void fetch() {
+		// =============== Branching Case ================		
+		if (!dontFetch && ec == 4 && !end && this.pcsrc == 1)
+			ec = 0;
+		else
+			this.pcsrc = 0;
 
 		this.pc = mux(pc + 1, ex_mem.getAdderOutput(), this.pcsrc);
 
@@ -166,9 +166,7 @@ public class Program {
 
 		System.out.println(this.if_id.print());
 		System.out.println("________________________\n");
-		
-		// =============== Branching Case ================
-		
+
 		this.if_id.setState(true);
 
 	}
@@ -181,8 +179,6 @@ public class Program {
 		this.id_ex.setNextPC(this.if_id.getNextPC());
 
 		String[] tmp = this.if_id.getInstruction();
-		//System.out.println(tmp[0]);
-		// System.out.println(this.if_id.getInstruction());
 
 		// R FORMAT
 		if (tmp[0].equalsIgnoreCase("add")
@@ -198,13 +194,12 @@ public class Program {
 			// if the type of the instruction is an R type instruction:
 
 			// part 1 of the stage
-			// System.out.println(tmp[2]);
 			this.reg_file.setRead_Reg1(tmp[2]); // rs
 			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
 
 			this.reg_file.setRead_Reg2(tmp[3]); // rt
 			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
-			
+
 			this.id_ex.setExtend(-1);
 
 			this.id_ex.setRt(-1);
@@ -253,10 +248,6 @@ public class Program {
 
 			this.id_ex.setReadData2(-1);
 
-			// this.reg_file.setRead_Reg2(tmp[3]); // immediate
-			// value
-			// this.id_ex.setExtend(this.reg_file.getRead_Data2());
-			
 			this.id_ex.setExtend(Integer.parseInt(tmp[3]));
 
 			this.id_ex.setRt(Integer.parseInt((tmp[1]))); // rt
@@ -294,14 +285,14 @@ public class Program {
 
 			this.id_ex.setRt(-1);
 			this.id_ex.setRd(-1);
-			
+
 			// =============== Branching Case ================
 			dontFetch = true;
-			bc++;
+			// bc++;
 		}
 
 		else if (tmp[0].equalsIgnoreCase("lw")) {
-			//w
+			// w
 			this.id_ex.setRegWrite(1);
 			this.id_ex.setMemToReg(0);
 			// m
@@ -314,9 +305,6 @@ public class Program {
 			this.id_ex.setRegDst(0);
 
 			// this.id_ex.setNextPC(this.if_id.getNextPC());
-
-			// this.reg_file.setRead_Reg1((this.if_id.getInstruction()[2]).substring(beginIndex,
-			// endIndex));
 
 			this.reg_file.setRead_Reg1(tmp[2]); // rs
 			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
@@ -345,15 +333,16 @@ public class Program {
 
 			// this.id_ex.setNextPC(this.if_id.getNextPC());
 
-			this.reg_file.setRead_Reg1(tmp[2]); // reg has the address to be added to offset
+			this.reg_file.setRead_Reg1(tmp[2]); // reg has the address to be
+												// added to offset
 			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
-			
-			this.reg_file.setRead_Reg2(tmp[1]);	//reg has the actuall data to be written in the memory
+
+			this.reg_file.setRead_Reg2(tmp[1]); // reg has the actuall data to
+												// be written in the memory
 			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
 
 			this.id_ex.setExtend(Integer.parseInt(tmp[3])); // offset
-			
-			
+
 			this.id_ex.setRt(-1); // rt
 			this.id_ex.setRd(-1);
 		}
@@ -396,15 +385,15 @@ public class Program {
 				this.id_ex.setExtend(this.reg_file.getRa());
 				break;
 			}
-			
+
 			// =============== Branching Case ================
 			this.dontFetch = true;
-			bc++;
+			// bc++;
 		}
 
 		System.out.println(this.id_ex.print());
 		System.out.println("________________________\n");
-		
+
 		this.id_ex.setState(true);
 
 	}
@@ -423,15 +412,11 @@ public class Program {
 
 		// add nextPC from id_ex register to the label address for jump & branch
 		// add it to the adder value in the ex_mem register
-		// ~~~MUST HANDEL LABEL CASE~~~
-		// this.ex_mem.setAdderOutput(this.id_ex.getNextPC() + 3);
-		// update: case handeled
 		this.ex_mem.setAdderOutput(this.id_ex.getExtend());
-		
 
 		// set alu data1 by read_data1 from reg_file
 		this.alu.setData1(this.id_ex.getReadData1());
-		
+		System.out.println("data 1 " + this.id_ex.getReadData1());
 
 		// set alu data2 by output from mux between
 		// reg_file read_data2
@@ -444,59 +429,57 @@ public class Program {
 		// calculate the operation and pass it to alu
 		// run alu
 		this.ex_mem.setAluResult(this.alu.run(this.id_ex.getOp()));
-		
 
 		// mux 3
 		this.ex_mem.setMux3Output(mux(this.id_ex.getRt(), this.id_ex.getRd(),
 				this.id_ex.getRegDst()));
-		
-		//	write data to the memory
+
+		// write data to the memory
 		this.ex_mem.setReadData2(this.id_ex.getReadData2());
-		
+
 		// zero signal
 		this.ex_mem.setZero(this.alu.getZero());
 
 		System.out.println(this.ex_mem.print());
 		System.out.println("________________________\n");
-		
-		// =============== Branching Case ================
+
 		this.ex_mem.setState(true);
 
-		//if(this.id_ex.getOp().equals("beq") || this.id_ex.getOp().equals("bne"))
-		if(this.ex_mem.getPCSrc() == 1){
+		// =============== Branching Case ================
+		if (this.ex_mem.getPCSrc() == 1) {
 			this.if_id.setState(false);
-			bc++;
+			// bc++;
 		}
-		
 
 	}
 
 	private void mem() {
-		
 		// wb
 		this.mem_wb.setRegWrite(this.ex_mem.getRegWrite());
 		this.mem_wb.setMemToReg(this.ex_mem.getMemToReg());
-		
-		this.data_memory.setMemRead(this.id_ex.getMemRead()); //control signal
-		this.data_memory.setMemWrite(this.id_ex.getMemWrite());	//control signal;
+
+		this.data_memory.setMemRead(this.id_ex.getMemRead()); // control signal
+		this.data_memory.setMemWrite(this.id_ex.getMemWrite()); // control
+																// signal;
 		this.data_memory.setAddress(this.ex_mem.getAluResult());
 		this.data_memory.setWrite_Data(this.ex_mem.getReadData2());
-		
+
 		this.mem_wb.setMux3Output(this.ex_mem.getMux3Output());
 		this.mem_wb.setAlu_Result(this.ex_mem.getAluResult());
 		this.mem_wb.setRead_Data(this.data_memory.getRead_Data());
 
+		System.out.println("ZERO " + this.alu.getZero() + " PCSRC "
+				+ this.ex_mem.getPCSrc());
 		this.pcsrc = this.alu.getZero() & this.ex_mem.getPCSrc();
+		System.out.println("PCSRC " + this.pcsrc);
 
 		System.out.println(this.mem_wb.print());
 		System.out.println("________________________\n");
-		
+
 		// =============== Branching Case ================
-		if(this.ex_mem.getPCSrc() == 1){
+		if (this.ex_mem.getPCSrc() == 1)
 			this.ex_mem.setState(false);
-			bc++;
-		}
-		
+
 		this.mem_wb.setState(true);
 	}
 
@@ -507,15 +490,6 @@ public class Program {
 				this.mem_wb.getAlu_Result(), this.mem_wb.getMemToReg()));
 
 		System.out.println("________________________\n");
-		
-		// =============== Branching Case ================
-		if(this.pcsrc == 1)
-			bc++;
-		else{
-			bc = 0;
-			//end = false;
-		}
-
 	}
 
 	/*
@@ -526,6 +500,5 @@ public class Program {
 			return v1;
 		return v2;
 	}
-	
 
 }
