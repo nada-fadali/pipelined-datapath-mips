@@ -45,8 +45,6 @@ public class Program {
 		this.instructCount = instructions.size() + address;
 		this.dontFetch = false;
 
-		System.out.println("initial pc " + this.pc);
-		System.out.println("initial count " + this.instructCount);
 		// =============== End Simulation Case ================
 		this.end = false;
 		this.ec = 0;
@@ -121,8 +119,6 @@ public class Program {
 			if (!end && (!dontFetch)) {
 				System.out.println("*** IF ****");
 				this.fetch();
-				System.out.println("new pc " + this.pc);
-				System.out.println("new count " + (this.instructCount - 1));
 				if (this.pc > this.instructCount - 2 && !dontFetch) {
 					end = true;
 					if (ec == 0)
@@ -191,13 +187,25 @@ public class Program {
 				|| this.if_id.getInstruction()[0].equalsIgnoreCase("sltu")) {
 
 			// if the type of the instruction is an R type instruction:
-
-			// part 1 of the stage
 			this.reg_file.setRead_Reg1(tmp[2]); // rs
 			this.id_ex.setReadData1(this.reg_file.getRead_Data1());
+			if (this.if_id.getInstruction()[0].equalsIgnoreCase("sll")
+					|| this.if_id.getInstruction()[0].equalsIgnoreCase("srl")) {
+				this.reg_file.setRead_Reg2(tmp[3]);
+				this.id_ex.setReadData2(Integer.parseInt(tmp[3]));
+			} else {
+				this.reg_file.setRead_Reg2(tmp[3]); // rt
+				this.id_ex.setReadData2(this.reg_file.getRead_Data2());
+			}
 
-			this.reg_file.setRead_Reg2(tmp[3]); // rt
-			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
+			// part 1 of the stage
+			/*
+			 * this.reg_file.setRead_Reg1(tmp[2]); // rs
+			 * this.id_ex.setReadData1(this.reg_file.getRead_Data1());
+			 * 
+			 * this.reg_file.setRead_Reg2(tmp[3]); // rt
+			 * this.id_ex.setReadData2(this.reg_file.getRead_Data2());
+			 */
 
 			this.id_ex.setExtend(-1);
 
@@ -279,7 +287,6 @@ public class Program {
 			this.id_ex.setReadData2(this.reg_file.getRead_Data2());
 
 			// LABEL ADDRESS
-			System.out.println("LABEL ADDRESS is " + tmp[3]);
 			this.id_ex.setExtend(Integer.parseInt(tmp[3]));
 
 			this.id_ex.setRt(-1);
@@ -413,7 +420,6 @@ public class Program {
 
 		// set alu data1 by read_data1 from reg_file
 		this.alu.setData1(this.id_ex.getReadData1());
-		System.out.println("data 1 " + this.id_ex.getReadData1());
 
 		// set alu data2 by output from mux between
 		// reg_file read_data2
@@ -464,10 +470,7 @@ public class Program {
 		this.mem_wb.setAlu_Result(this.ex_mem.getAluResult());
 		this.mem_wb.setRead_Data(this.data_memory.getRead_Data());
 
-		System.out.println("ZERO " + this.alu.getZero() + " PCSRC "
-				+ this.ex_mem.getPCSrc());
 		this.pcsrc = this.alu.getZero() & this.ex_mem.getPCSrc();
-		System.out.println("PCSRC " + this.pcsrc);
 
 		System.out.println(this.mem_wb.print());
 		System.out.println("________________________\n");

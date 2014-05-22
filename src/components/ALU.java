@@ -54,17 +54,31 @@ public class ALU {
 			this.result = this.data1 | this.data2;
 			break;
 		case "nor":
-			this.result = -~(this.data1 | this.data2);
+			int length1 = Integer.toBinaryString(this.data1).length();
+			int length2 = Integer.toBinaryString(this.data2).length();
+			int length = Math.max(length1, length2);
+			int mask = 0;
+
+			if (length == 1) {
+				mask = 0x00000001;
+			}
+			if (length == 2) {
+				mask = 0x00000004;
+			}
+			if (length == 4) {
+				mask = 0x0000000F;
+			}
+			this.result = ~(this.data1 | this.data2) & mask;
 			break;
 		case "slt":
 		case "sltu":
 			this.result = (this.data1 < this.data2) ? 1 : 0;
 			break;
 		case "sll":
-			this.result = this.data1 << this.data2;
+			this.result = this.data1 * (this.data2 * 2);
 			break;
 		case "srl":
-			this.result = this.data1 >> this.data2;
+			this.result = this.data1 / (this.data2 * 2);
 			break;
 		case "beq":
 			this.zero = (this.data1 == this.data2) ? 1 : 0;
@@ -76,7 +90,7 @@ public class ALU {
 		case "sw":
 			this.result = this.data1 + this.data2;
 			break;
-		
+
 		}
 
 		return this.result;
