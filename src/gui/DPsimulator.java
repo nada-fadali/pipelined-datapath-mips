@@ -556,17 +556,100 @@ public class DPsimulator extends JFrame {
 		contentPane.add(btnNext, gbc_btnNext);
 
 		JButton btnFinish = new JButton("finish");
+		btnFinish.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int clock = sim.getClock() - 1;
+				lblclk.setText(" "+ (clock+1) +" ");
+				String[] content = sim.getCyle(clock);
+				if(content == null) return;
+				
+				//	register file
+				String[] tmp = content[0].split(" ");
+				String[][] row = new String[34][3];
+				int i = 0;
+				for(int j = 0; j < 32; j++){
+					row[j][0] = "" + j; row[j][1] = tmp[i]; row[j][2] = tmp[i+1]; i+=2;
+				}
+				row[32][0] = "Ra"; row[32][1] = tmp[i]; row[32][2] = tmp[i+1]; i+=2;
+				row[33][0] = "PC"; row[33][1] = tmp[i]; row[33][2] = tmp[i+1];
+				String[] col = { "Reg", "Dec", "Hex" };
+				
+				DefaultTableModel mdl = new DefaultTableModel(row, col);
+				registers.setModel(mdl);
+				
+				//	data memory
+				if(!content[1].equals("")){
+					tmp = content[1].split(" ");
+					String[] colm = { "Addr", "Dec", "Hex" };
+					String[][] rowm = new String[tmp.length/3][3];
+					i = 0;
+					for(int k = 0; k < tmp.length; k+=3){
+						rowm[i][0] = tmp[k]; rowm[i][1] = tmp[k+1]; rowm[i][2] = tmp[k+2]; i++;
+					}
+					DefaultTableModel mdlm = new DefaultTableModel(rowm, colm);
+					memory.setModel(mdlm);
+				}
+				
+				//	pcsrc
+				lblpcsrc.setText(" " + content[2] + " ");
+				
+				//	ifid
+				//System.out.println(content[3]);
+				tmp = content[3].split(" ");
+				String s = "";
+				for(int k = 1; k < tmp.length; k++){
+					s+= tmp[k] + " ";
+				}
+				String[] colpr1 = { "nextPC", "Instruction" };
+				String[][] rowpr1 = { {tmp[0], s}};
+				System.out.println(s);
+				DefaultTableModel mdlpr1 = new DefaultTableModel(rowpr1, colpr1);
+				if_id.setModel(mdlpr1);
+				
+				//	idex
+				tmp = content[4].split(" ");
+				String[] colpr2 = { "nextPC", "data1", "data2", "extend", "rt", "rd",
+						"WB", "M", "EX" };
+				String[][] rowpr2 = {tmp};
+				DefaultTableModel mdlpr2 = new DefaultTableModel(rowpr2, colpr2);
+				id_ex.setModel(mdlpr2);
+				
+				//	exmem
+				tmp = content[5].split(" ");
+				String[] colpr3 = { "newPC", "Zero", "Alu Result", "rt/rd", "WB", "M" };
+				String[][] rowpr3 = {tmp};
+				DefaultTableModel mdlpr3 = new DefaultTableModel(rowpr3, colpr3);
+				ex_mem.setModel(mdlpr3);
+				
+				//	memwb
+				tmp = content[6].split(" ");
+				String[] colpr4 = { "read data", "Alu Result", "rt/rd", "WB" };
+				String[][] rowpr4 = {tmp};
+				DefaultTableModel mdlpr4 = new DefaultTableModel(rowpr4, colpr4);
+				mem_wb.setModel(mdlpr4);
+			}
+		});
 		GridBagConstraints gbc_btnFinish = new GridBagConstraints();
 		gbc_btnFinish.insets = new Insets(0, 0, 5, 0);
 		gbc_btnFinish.gridx = 2;
 		gbc_btnFinish.gridy = 14;
 		contentPane.add(btnFinish, gbc_btnFinish);
 
-		JButton btnStop = new JButton("reset");
+		JButton btnStop = new JButton("new");
 		btnStop.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-			
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							DPsimulator frame = new DPsimulator();
+							frame.run();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
 			}
 		});
 		GridBagConstraints gbc_btnStop = new GridBagConstraints();
