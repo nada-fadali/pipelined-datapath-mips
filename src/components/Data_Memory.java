@@ -66,7 +66,7 @@ public class Data_Memory {
 		String s = "";
 		if (!memory.isEmpty()){
 			for(Map.Entry<Integer, Integer> entry: memory.entrySet()){
-				s += entry.getKey() + " " + entry.getValue() 
+				s += "" + entry.getKey() + " " + entry.getValue() 
 						+ " " + Integer.toHexString(entry.getValue()) + " ";
 			}
 		}

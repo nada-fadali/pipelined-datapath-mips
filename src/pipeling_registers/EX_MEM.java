@@ -141,7 +141,7 @@ public class EX_MEM {
 	// **
 	public String getContent(){
 		return "" + adderOutput + " " + zero + " " + aluResult + " " + mux3Output + " "
-				+ wb[0] + " " + wb[1] + " "
-				+ m[0] + " " + m[1] + " " + m[2];
+				+ wb[0] + "" + wb[1] + " "
+				+ m[0] + "" + m[1] + "" + m[2];
 	}
 }

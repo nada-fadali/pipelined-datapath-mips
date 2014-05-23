@@ -34,8 +34,7 @@ public class Program {
 	private int ec;
 
 	// =============== GUI Input =========================
-	private ArrayList<String[]> cycle; // index+1 is the clock cycle #
-										// size is number of clock cycles
+	private ArrayList<String[]> cycle; // size is number of clock cycles
 	/*
 	 * Constructor
 	 */
@@ -141,24 +140,24 @@ public class Program {
 			// ========================= GUI input ==============================
 			// update cycle
 			
-			// cycle.get(i)[0] -> register file + pc *form String.split(" ")
-			// cycle.get(i)[1] -> data memory *
+			// cycle.get(i)[0] -> register file + pc
+			// cycle.get(i)[1] -> data memory 
 			// cycle.get(i)[2] -> this.pcsrc
-			// cycle.get(i)[3] -> if_id.getContent(); *
-			// cycle.get(i)[4] -> id_ex.getContent(); *
-			// cycle.get(i)[5] -> ex_mem.getContent(); *
-			// cycle.get(i)[6] -> mem_wb.getContent(); *
+			// cycle.get(i)[3] -> if_id.getContent(); 
+			// cycle.get(i)[4] -> id_ex.getContent(); 
+			// cycle.get(i)[5] -> ex_mem.getContent(); 
+			// cycle.get(i)[6] -> mem_wb.getContent(); 
 			
 			String[] s = {
-					reg_file.getContent() + " " + pc + " " +Integer.toHexString(pc),
+					"" + reg_file.getContent() + pc + " " +Integer.toHexString(pc),
 					data_memory.getContent(),
-					"" + pcsrc,
+					pcsrc + "",
 					if_id.getContent(),
 					id_ex.getContent(),
 					ex_mem.getContent(),
 					mem_wb.getContent()
 			};
-			this.cycle.add(clock, s);
+			this.cycle.add(s);
 			
 			
 			this.clock++;
@@ -533,7 +532,9 @@ public class Program {
 
 	// **
 	public String[] getCyle(int i) {
-		return this.cycle.get(i - 1);
+		if(i > cycle.size() - 1)
+			return null;
+		return this.cycle.get(i);
 	}
 	
 	public int getClock(){

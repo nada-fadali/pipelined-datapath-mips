@@ -51,7 +51,7 @@ public class IF_ID {
 	
 	// **
 	public String getContent(){
-		String s = "" + this.nextPC;
+		String s = "" + this.nextPC + " ";
 		for(int i = 0; i < this.instruction.length; i++)
 			s += this.instruction[i] + " ";
 		return s;

@@ -80,6 +80,6 @@ public class MEM_WB {
 	// **
 	public String getContent() {
 		return "" + read_Data + " " + alu_Result + " " + mux3Output + " "
-				+ wb[0] + " " + wb[1];
+				+ wb[0] + "" + wb[1];
 	}
 }

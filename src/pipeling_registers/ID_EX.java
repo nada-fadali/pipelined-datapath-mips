@@ -182,9 +182,9 @@ public class ID_EX {
 	public String getContent(){
 		return  "" + nextPC + " " + readData1 + " " + readData2 + " " + extend + " " 
 				+ rt + " " + rd +" "
-				+ wb[0] + " " + wb[1] + " "
-				+ m[0] + " " + m[1] + " " + m[2] + " "
-				+ ex[0] + " " + ex[1] + ex[2];
+				+ wb[0] + "" + wb[1] + " "
+				+ m[0] + "" + m[1] + "" + m[2] + " "
+				+ ex[0] + "" + ex[1] + "" +ex[2];
 		
 	}
 
