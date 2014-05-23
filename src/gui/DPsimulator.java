@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
@@ -15,10 +16,14 @@ import javax.swing.JButton;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
-import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.BevelBorder;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 import javax.swing.JTable;
 
 import java.awt.event.MouseAdapter;
@@ -33,8 +38,9 @@ import java.util.ArrayList;
 import javax.swing.JTextField;
 
 import simulator.Program;
+
 import java.awt.SystemColor;
-import javax.swing.SwingConstants;
+
 
 public class DPsimulator extends JFrame {
 
@@ -47,7 +53,7 @@ public class DPsimulator extends JFrame {
 	private JTable id_ex;
 	private JTable ex_mem;
 	private JTable mem_wb;
-	private JTextArea codetxt;
+	private JTextPane codetxt;
 	private JTextField dataAddresstxt;
 	private JTextField dataMemtxt;
 	private JTextField pcstarttxt;
@@ -87,7 +93,7 @@ public class DPsimulator extends JFrame {
 		setTitle("Mips Datapath Simulator");
 		setBounds(100, 100, 1140, 628);
 		setResizable(false);
-		
+
 		this.initContentPane();
 		this.initCodePanel();
 		this.initInputDataPanel();
@@ -129,6 +135,83 @@ public class DPsimulator extends JFrame {
 		contentPane.setLayout(gbl_contentPane);
 	}
 
+	// =================================================
+	// helper method for coloring keywords in text pane
+	final StyleContext cont = StyleContext.getDefaultStyleContext();
+	final AttributeSet attr = cont.addAttribute(cont.getEmptySet(),
+			StyleConstants.Foreground, Color.RED);
+	final AttributeSet attrBlack = cont.addAttribute(cont.getEmptySet(),
+			StyleConstants.Foreground, Color.BLACK);
+	private int findLastNonWordChar(String text, int index) {
+		while (--index >= 0) {
+			if (String.valueOf(text.charAt(index)).matches("\\W")) {
+				break;
+			}
+		}
+		return index;
+	}
+	private int findFirstNonWordChar(String text, int index) {
+		while (index < text.length()) {
+			if (String.valueOf(text.charAt(index)).matches("\\W")) {
+				break;
+			}
+			index++;
+		}
+		return index;
+	}
+	DefaultStyledDocument doc = new DefaultStyledDocument() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public void insertString(int offset, String str, AttributeSet a)
+				throws BadLocationException {
+			super.insertString(offset, str, a);
+
+			String text = getText(0, getLength());
+			int before = findLastNonWordChar(text, offset);
+			if (before < 0)
+				before = 0;
+			int after = findFirstNonWordChar(text, offset + str.length());
+			int wordL = before;
+			int wordR = before;
+
+			while (wordR <= after) {
+				if (wordR == after
+						|| String.valueOf(text.charAt(wordR)).matches("\\W")) {
+					if (text.substring(wordL, wordR).matches(
+							"(\\W)*(add|addi|sub|lw|sw|sll|srl|and|andi|or|ori|nor|beq|bne|j|jal|jr|slt|sltu)"))
+						setCharacterAttributes(wordL, wordR - wordL, attr,
+								false);
+					else
+						setCharacterAttributes(wordL, wordR - wordL, attrBlack,
+								false);
+					wordL = wordR;
+				}
+				wordR++;
+			}
+		}
+
+		public void remove(int offs, int len) throws BadLocationException {
+			super.remove(offs, len);
+
+			String text = getText(0, getLength());
+			int before = findLastNonWordChar(text, offs);
+			if (before < 0)
+				before = 0;
+			int after = findFirstNonWordChar(text, offs);
+
+			if (text.substring(before, after).matches(
+					"(\\W)*(add|addi|sub|lw|sw|sll|srl|and|andi|or|ori|nor|beq|bne|j|jal|jr|slt|sltu)")) {
+				setCharacterAttributes(before, after - before, attr, false);
+			} else {
+				setCharacterAttributes(before, after - before, attrBlack, false);
+			}
+		}
+	};
+	// =================================================
+
 	private void initCodePanel() {
 		JScrollPane codesp = new JScrollPane();
 		GridBagConstraints gbc_codesp = new GridBagConstraints();
@@ -141,7 +224,7 @@ public class DPsimulator extends JFrame {
 		gbc_codesp.gridy = 0;
 		contentPane.add(codesp, gbc_codesp);
 
-		codetxt = new JTextArea();
+		codetxt = new JTextPane(doc);
 		codetxt.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -152,7 +235,6 @@ public class DPsimulator extends JFrame {
 		});
 		codetxt.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null,
 				null, null));
-		codetxt.setLineWrap(true);
 		codesp.setViewportView(codetxt);
 	}
 
@@ -216,6 +298,8 @@ public class DPsimulator extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				data.add(dataAddresstxt.getText() + "/" + dataMemtxt.getText());
+				dataAddresstxt.setText("");
+				dataMemtxt.setText("");
 			}
 		});
 		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
@@ -268,9 +352,9 @@ public class DPsimulator extends JFrame {
 		row[33][2] = "0";
 
 		registers = new JTable(row, col);
+		registers.setEnabled(false);
 		registers.setBorder(new LineBorder(SystemColor.activeCaptionBorder, 2));
 		registers.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-		registers.setEnabled(false);
 
 		JScrollPane regsp = new JScrollPane(registers);
 		regsp.setBorder(null);
@@ -308,24 +392,24 @@ public class DPsimulator extends JFrame {
 		gbc_btnRun.gridy = 14;
 		contentPane.add(btnRun, gbc_btnRun);
 
-		JButton btnNext = new JButton("next");
+		JButton btnNext = new JButton("step");
 		GridBagConstraints gbc_btnNext = new GridBagConstraints();
 		gbc_btnNext.gridwidth = 4;
-		gbc_btnNext.insets = new Insets(0, 0, 5, 115);
+		gbc_btnNext.insets = new Insets(0, 0, 5, 117);
 		gbc_btnNext.gridx = 1;
 		gbc_btnNext.gridy = 14;
 		contentPane.add(btnNext, gbc_btnNext);
 
 		JButton btnFinish = new JButton("finish");
 		GridBagConstraints gbc_btnFinish = new GridBagConstraints();
-		gbc_btnFinish.insets = new Insets(0, 0, 5, 5);
+		gbc_btnFinish.insets = new Insets(0, 0, 5, 0);
 		gbc_btnFinish.gridx = 2;
 		gbc_btnFinish.gridy = 14;
 		contentPane.add(btnFinish, gbc_btnFinish);
 
-		JButton btnStop = new JButton("stop");
+		JButton btnStop = new JButton("clear");
 		GridBagConstraints gbc_btnStop = new GridBagConstraints();
-		gbc_btnStop.insets = new Insets(0, 0, 5, 5);
+		gbc_btnStop.insets = new Insets(0, 10, 5, 5);
 		gbc_btnStop.gridx = 3;
 		gbc_btnStop.gridy = 14;
 		contentPane.add(btnStop, gbc_btnStop);
@@ -370,7 +454,7 @@ public class DPsimulator extends JFrame {
 		if_id.setEnabled(false);
 
 		JScrollPane if_idsp = new JScrollPane(if_id);
-		//if_idsp.setBorder(new LineBorder(new Color(0, 0, 0)));
+		// if_idsp.setBorder(new LineBorder(new Color(0, 0, 0)));
 		GridBagConstraints gbc_if_idsp = new GridBagConstraints();
 		gbc_if_idsp.gridheight = 2;
 		gbc_if_idsp.gridwidth = 19;
@@ -401,7 +485,7 @@ public class DPsimulator extends JFrame {
 		id_ex.setEnabled(false);
 
 		JScrollPane id_exsp = new JScrollPane(id_ex);
-		//id_exsp.setBorder(new LineBorder(new Color(0, 0, 0)));
+		// id_exsp.setBorder(new LineBorder(new Color(0, 0, 0)));
 		GridBagConstraints gbc_id_exsp = new GridBagConstraints();
 		gbc_id_exsp.gridheight = 6;
 		gbc_id_exsp.gridwidth = 19;
@@ -430,7 +514,7 @@ public class DPsimulator extends JFrame {
 		ex_mem.setEnabled(false);
 
 		JScrollPane ex_memsp = new JScrollPane(ex_mem);
-		//ex_memsp.setBorder(new LineBorder(new Color(0, 0, 0)));
+		// ex_memsp.setBorder(new LineBorder(new Color(0, 0, 0)));
 		GridBagConstraints gbc_ex_memsp = new GridBagConstraints();
 		gbc_ex_memsp.gridheight = 4;
 		gbc_ex_memsp.gridwidth = 19;
@@ -458,7 +542,7 @@ public class DPsimulator extends JFrame {
 		mem_wb.setEnabled(false);
 
 		JScrollPane mem_wbsp = new JScrollPane(mem_wb);
-		//mem_wbsp.setBorder(new LineBorder(new Color(0, 0, 0)));
+		// mem_wbsp.setBorder(new LineBorder(new Color(0, 0, 0)));
 		GridBagConstraints gbc_mem_wbsp = new GridBagConstraints();
 		gbc_mem_wbsp.gridheight = 2;
 		gbc_mem_wbsp.gridwidth = 19;
@@ -492,7 +576,7 @@ public class DPsimulator extends JFrame {
 
 	// run frame
 	public void run() {
-		//this.pack();
+		// this.pack();
 		this.setVisible(true);
 	}
 }
