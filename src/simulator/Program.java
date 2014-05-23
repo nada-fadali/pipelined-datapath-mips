@@ -150,7 +150,7 @@ public class Program {
 			// cycle.get(i)[6] -> mem_wb.getContent(); *
 			
 			String[] s = {
-					reg_file.getContent() + " " + pc,
+					reg_file.getContent() + " " + pc + " " +Integer.toHexString(pc),
 					data_memory.getContent(),
 					"" + pcsrc,
 					if_id.getContent(),
