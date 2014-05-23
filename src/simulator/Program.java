@@ -157,7 +157,7 @@ public class Program {
 					ex_mem.getContent(),
 					mem_wb.getContent()
 			};
-			this.cycle.add(s);
+			this.cycle.add(clock, s);
 			
 			
 			this.clock++;
@@ -329,7 +329,7 @@ public class Program {
 		else if (tmp[0].equalsIgnoreCase("lw")) {
 			// w
 			this.id_ex.setRegWrite(1);
-			this.id_ex.setMemToReg(0);
+			this.id_ex.setMemToReg(1);
 			// m
 			this.id_ex.setMemRead(1);
 			this.id_ex.setMemWrite(0);

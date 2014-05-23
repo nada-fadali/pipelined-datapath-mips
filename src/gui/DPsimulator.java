@@ -382,13 +382,14 @@ public class DPsimulator extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if(!codetxt.getText().equals("")){
 					String[] tmp = codetxt.getText().split("\n");
-					//System.out.println(codetxt.getText());
+
 					for (int i = 0; i < tmp.length; i++)
-						code.add(i, tmp[0]);
+						code.add(i, tmp[i]);
 					pcstart = (pcstarttxt.getText().equals("")) ? 0 : Integer
 							.parseInt(pcstarttxt.getText());
 
 					// start simulator
+					//System.out.println(code);
 					sim = new Program(code, data, pcstart);
 					sim.run();
 
@@ -519,7 +520,7 @@ public class DPsimulator extends JFrame {
 				}
 				String[] colpr1 = { "nextPC", "Instruction" };
 				String[][] rowpr1 = { {tmp[0], s}};
-				System.out.println(s);
+				//System.out.println(s);
 				DefaultTableModel mdlpr1 = new DefaultTableModel(rowpr1, colpr1);
 				if_id.setModel(mdlpr1);
 				
@@ -603,7 +604,7 @@ public class DPsimulator extends JFrame {
 				}
 				String[] colpr1 = { "nextPC", "Instruction" };
 				String[][] rowpr1 = { {tmp[0], s}};
-				System.out.println(s);
+				//System.out.println(s);
 				DefaultTableModel mdlpr1 = new DefaultTableModel(rowpr1, colpr1);
 				if_id.setModel(mdlpr1);
 				
