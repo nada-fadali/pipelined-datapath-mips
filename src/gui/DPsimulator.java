@@ -21,12 +21,21 @@ import javax.swing.border.BevelBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JLabel;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.EtchedBorder;
 
 public class DPsimulator extends JFrame {
 
 	private JPanel contentPane;
 	private JTable registers;
 	private JTable memory;
+	private JTable if_id;
+	private JTable id_ex;
+	private JTable ex_mem;
+	private JTable mem_wb;
 
 	/**
 	 * Launch the application.
@@ -50,97 +59,289 @@ public class DPsimulator extends JFrame {
 	public DPsimulator() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("Mips Datapath Simulator");
-		setBounds(100, 100, 640, 568); 
+		setBounds(100, 100, 640, 568);
+
+		this.initContentPane();
+
+		this.initCodePanel();
+
+		this.initDataMemory();
+
+		this.initRegisterFile();
+
+		this.initButtons();
+
+		this.initLblClock();
+
+		this.initIFID();
+
+		this.initIDEX();
+
+		this.initEXMEM();
+		
+		this.initMEMWB();
+
+		this.initLblPCsrc();
+
+	}
+
+	private void initContentPane() {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPane.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0 };
+		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0 };
+		gbl_contentPane.columnWeights = new double[] { 1.0, 0.0, 0.0, 0.0, 0.0,
+				0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 1.0, 0.0, 0.0, 0.0, 1.0,
+				0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0,
+				0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0,
+				0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
-		
+	}
+
+	private void initCodePanel() {
 		JScrollPane codesp = new JScrollPane();
 		GridBagConstraints gbc_codesp = new GridBagConstraints();
-		gbc_codesp.gridheight = 3;
-		gbc_codesp.gridwidth = 11;
+		gbc_codesp.gridheight = 8;
+		gbc_codesp.gridwidth = 7;
 		gbc_codesp.insets = new Insets(0, 0, 5, 5);
 		gbc_codesp.fill = GridBagConstraints.BOTH;
 		gbc_codesp.gridx = 0;
 		gbc_codesp.gridy = 0;
 		contentPane.add(codesp, gbc_codesp);
-		
+
 		JTextArea codetxt = new JTextArea();
-		codetxt.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		codetxt.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null,
+				null, null));
 		codetxt.setLineWrap(true);
 		codesp.setViewportView(codetxt);
-		
+	}
+
+	private void initDataMemory() {
 		// data memory
 		// fill table with data
 		memory = new JTable();
+		memory.setShowHorizontalLines(true);
+		memory.setShowVerticalLines(true);
+		memory.setBorder(new LineBorder(new Color(0, 0, 0)));
 		memory.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		memory.setEnabled(false);
-		
+
 		JScrollPane memsp = new JScrollPane(memory);
+		memsp.setBorder(new LineBorder(new Color(0, 0, 0)));
 		GridBagConstraints gbc_memsp = new GridBagConstraints();
-		gbc_memsp.gridwidth = 2;
-		gbc_memsp.gridheight = 4;
+		gbc_memsp.gridwidth = 6;
+		gbc_memsp.gridheight = 11;
 		gbc_memsp.insets = new Insets(0, 0, 5, 5);
 		gbc_memsp.fill = GridBagConstraints.BOTH;
-		gbc_memsp.gridx = 11;
+		gbc_memsp.gridx = 7;
 		gbc_memsp.gridy = 0;
 		contentPane.add(memsp, gbc_memsp);
+	}
 
+	private void initRegisterFile() {
 		// register file
 		// fill table with data
 		registers = new JTable();
+		registers.setBorder(new LineBorder(new Color(0, 0, 0)));
 		registers.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		registers.setEnabled(false);
-		
+
 		JScrollPane regsp = new JScrollPane(registers);
 		regsp.setBorder(new LineBorder(new Color(0, 0, 0)));
 		GridBagConstraints gbc_regsp = new GridBagConstraints();
-		gbc_regsp.gridheight = 16;
+		gbc_regsp.gridheight = 33;
 		gbc_regsp.fill = GridBagConstraints.BOTH;
 		gbc_regsp.gridx = 13;
 		gbc_regsp.gridy = 0;
 		contentPane.add(regsp, gbc_regsp);
-		
-		JButton btnSimulate = new JButton("simulate");
-		btnSimulate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+	}
+
+	private void initButtons() {
+		JButton btnRun = new JButton("run");
+		btnRun.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
 			}
 		});
-		
-		
-		JButton btnClear = new JButton("clear");
-		btnClear.setFont(new Font("Dialog", Font.BOLD, 10));
-		GridBagConstraints gbc_btnClear = new GridBagConstraints();
-		gbc_btnClear.insets = new Insets(0, 0, 5, 5);
-		gbc_btnClear.gridx = 9;
-		gbc_btnClear.gridy = 3;
-		contentPane.add(btnClear, gbc_btnClear);
-		btnSimulate.setFont(new Font("Dialog", Font.BOLD, 10));
-		GridBagConstraints gbc_btnSimulate = new GridBagConstraints();
-		gbc_btnSimulate.insets = new Insets(0, 0, 5, 5);
-		gbc_btnSimulate.gridx = 10;
-		gbc_btnSimulate.gridy = 3;
-		contentPane.add(btnSimulate, gbc_btnSimulate);
-		
-		JScrollPane pipeline = new JScrollPane();
-		GridBagConstraints gbc_pipeline = new GridBagConstraints();
-		gbc_pipeline.gridheight = 12;
-		gbc_pipeline.gridwidth = 13;
-		gbc_pipeline.insets = new Insets(0, 0, 0, 5);
-		gbc_pipeline.fill = GridBagConstraints.BOTH;
-		gbc_pipeline.gridx = 0;
-		gbc_pipeline.gridy = 4;
-		contentPane.add(pipeline, gbc_pipeline);
+		GridBagConstraints gbc_btnRun = new GridBagConstraints();
+		gbc_btnRun.anchor = GridBagConstraints.EAST;
+		gbc_btnRun.insets = new Insets(0, 0, 5, 5);
+		gbc_btnRun.gridx = 0;
+		gbc_btnRun.gridy = 8;
+		contentPane.add(btnRun, gbc_btnRun);
+
+		JButton btnNext = new JButton("next");
+		GridBagConstraints gbc_btnNext = new GridBagConstraints();
+		gbc_btnNext.insets = new Insets(0, 0, 5, 5);
+		gbc_btnNext.gridx = 1;
+		gbc_btnNext.gridy = 8;
+		contentPane.add(btnNext, gbc_btnNext);
+
+		JButton btnFinish = new JButton("finish");
+		GridBagConstraints gbc_btnFinish = new GridBagConstraints();
+		gbc_btnFinish.insets = new Insets(0, 0, 5, 5);
+		gbc_btnFinish.gridx = 2;
+		gbc_btnFinish.gridy = 8;
+		contentPane.add(btnFinish, gbc_btnFinish);
+
+		JButton btnStop = new JButton("stop");
+		GridBagConstraints gbc_btnStop = new GridBagConstraints();
+		gbc_btnStop.insets = new Insets(0, 0, 5, 5);
+		gbc_btnStop.gridx = 3;
+		gbc_btnStop.gridy = 8;
+		contentPane.add(btnStop, gbc_btnStop);
 	}
-	
+
+	private void initLblClock() {
+		JLabel lblClock = new JLabel("Clock #");
+		GridBagConstraints gbc_lblClock = new GridBagConstraints();
+		gbc_lblClock.insets = new Insets(0, 0, 5, 5);
+		gbc_lblClock.gridx = 2;
+		gbc_lblClock.gridy = 10;
+		contentPane.add(lblClock, gbc_lblClock);
+
+		JLabel label = new JLabel("0");
+		label.setForeground(Color.RED);
+		GridBagConstraints gbc_label = new GridBagConstraints();
+		gbc_label.anchor = GridBagConstraints.WEST;
+		gbc_label.insets = new Insets(0, 0, 5, 5);
+		gbc_label.gridx = 3;
+		gbc_label.gridy = 10;
+		contentPane.add(label, gbc_label);
+	}
+
+	private void initIFID() {
+
+		JLabel lblIfidRegister = new JLabel("IF/ID REGISTER");
+		GridBagConstraints gbc_lblIfidRegister = new GridBagConstraints();
+		gbc_lblIfidRegister.anchor = GridBagConstraints.WEST;
+		gbc_lblIfidRegister.insets = new Insets(0, 0, 5, 5);
+		gbc_lblIfidRegister.gridx = 0;
+		gbc_lblIfidRegister.gridy = 11;
+		contentPane.add(lblIfidRegister, gbc_lblIfidRegister);
+
+		if_id = new JTable();
+		if_id.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		if_id.setBorder(new LineBorder(new Color(0, 0, 0)));
+		if_id.setEnabled(false);
+
+		JScrollPane if_idsp = new JScrollPane(if_id);
+		if_idsp.setBorder(new LineBorder(new Color(0, 0, 0)));
+		GridBagConstraints gbc_if_idsp = new GridBagConstraints();
+		gbc_if_idsp.gridwidth = 13;
+		gbc_if_idsp.insets = new Insets(0, 0, 5, 5);
+		gbc_if_idsp.fill = GridBagConstraints.BOTH;
+		gbc_if_idsp.gridx = 0;
+		gbc_if_idsp.gridy = 14;
+		contentPane.add(if_idsp, gbc_if_idsp);
+
+	}
+
+	private void initIDEX() {
+		JLabel lblIdexRegister = new JLabel("ID/EX REGISTER");
+		GridBagConstraints gbc_lblIdexRegister = new GridBagConstraints();
+		gbc_lblIdexRegister.anchor = GridBagConstraints.WEST;
+		gbc_lblIdexRegister.insets = new Insets(0, 0, 5, 5);
+		gbc_lblIdexRegister.gridx = 0;
+		gbc_lblIdexRegister.gridy = 15;
+		contentPane.add(lblIdexRegister, gbc_lblIdexRegister);
+
+		id_ex = new JTable();
+		id_ex.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		id_ex.setBorder(new LineBorder(new Color(0, 0, 0)));
+		id_ex.setEnabled(false);
+
+		JScrollPane id_exsp = new JScrollPane(id_ex);
+		id_exsp.setBorder(new LineBorder(new Color(0, 0, 0)));
+		GridBagConstraints gbc_id_exsp = new GridBagConstraints();
+		gbc_id_exsp.gridwidth = 13;
+		gbc_id_exsp.insets = new Insets(0, 0, 5, 5);
+		gbc_id_exsp.fill = GridBagConstraints.BOTH;
+		gbc_id_exsp.gridx = 0;
+		gbc_id_exsp.gridy = 16;
+		contentPane.add(id_exsp, gbc_id_exsp);
+
+	}
+
+	private void initEXMEM() {
+		JLabel lblExmemRegister = new JLabel("EX/MEM REGISTER");
+		GridBagConstraints gbc_lblExmemRegister = new GridBagConstraints();
+		gbc_lblExmemRegister.anchor = GridBagConstraints.WEST;
+		gbc_lblExmemRegister.insets = new Insets(0, 0, 5, 5);
+		gbc_lblExmemRegister.gridx = 0;
+		gbc_lblExmemRegister.gridy = 17;
+		contentPane.add(lblExmemRegister, gbc_lblExmemRegister);
+
+		ex_mem = new JTable();
+		ex_mem.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		ex_mem.setBorder(new LineBorder(new Color(0, 0, 0)));
+		ex_mem.setEnabled(false);
+
+		JScrollPane ex_memsp = new JScrollPane(ex_mem);
+		ex_memsp.setBorder(new LineBorder(new Color(0, 0, 0)));
+		GridBagConstraints gbc_ex_memsp = new GridBagConstraints();
+		gbc_ex_memsp.gridwidth = 13;
+		gbc_ex_memsp.insets = new Insets(0, 0, 5, 5);
+		gbc_ex_memsp.fill = GridBagConstraints.BOTH;
+		gbc_ex_memsp.gridx = 0;
+		gbc_ex_memsp.gridy = 18;
+		contentPane.add(ex_memsp, gbc_ex_memsp);
+
+	}
+
+	private void initMEMWB() {
+		JLabel lblMemwbRegister_1 = new JLabel("MEM/WB REGISTER");
+		GridBagConstraints gbc_lblMemwbRegister_1 = new GridBagConstraints();
+		gbc_lblMemwbRegister_1.insets = new Insets(0, 0, 5, 5);
+		gbc_lblMemwbRegister_1.gridx = 0;
+		gbc_lblMemwbRegister_1.gridy = 19;
+		contentPane.add(lblMemwbRegister_1, gbc_lblMemwbRegister_1);
+
+		mem_wb = new JTable();
+		mem_wb.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		mem_wb.setBorder(new LineBorder(new Color(0, 0, 0)));
+		mem_wb.setEnabled(false);
+		
+		JScrollPane mem_wbsp = new JScrollPane(mem_wb);
+		mem_wbsp.setBorder(new LineBorder(new Color(0, 0, 0)));
+		GridBagConstraints gbc_mem_wbsp = new GridBagConstraints();
+		gbc_mem_wbsp.gridheight = 7;
+		gbc_mem_wbsp.gridwidth = 13;
+		gbc_mem_wbsp.insets = new Insets(0, 0, 5, 5);
+		gbc_mem_wbsp.fill = GridBagConstraints.BOTH;
+		gbc_mem_wbsp.gridx = 0;
+		gbc_mem_wbsp.gridy = 20;
+		contentPane.add(mem_wbsp, gbc_mem_wbsp);
+
+	}
+
+	private void initLblPCsrc() {
+
+		JLabel lblPcsrcSignal = new JLabel("PCSrc SIGNAL");
+		GridBagConstraints gbc_lblPcsrcSignal = new GridBagConstraints();
+		gbc_lblPcsrcSignal.anchor = GridBagConstraints.WEST;
+		gbc_lblPcsrcSignal.insets = new Insets(0, 0, 5, 5);
+		gbc_lblPcsrcSignal.gridx = 0;
+		gbc_lblPcsrcSignal.gridy = 27;
+		contentPane.add(lblPcsrcSignal, gbc_lblPcsrcSignal);
+
+		JLabel label_1 = new JLabel(" 0 ");
+		label_1.setBorder(new LineBorder(new Color(0, 0, 0)));
+		GridBagConstraints gbc_label_1 = new GridBagConstraints();
+		gbc_label_1.insets = new Insets(0, 0, 5, 5);
+		gbc_label_1.gridx = 0;
+		gbc_label_1.gridy = 28;
+		contentPane.add(label_1, gbc_label_1);
+	}
+
 	// run frame
-	public void run(){
+	public void run() {
 		this.setVisible(true);
 	}
 }
