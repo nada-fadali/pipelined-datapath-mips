@@ -72,4 +72,13 @@ public class Registers_File {
 		s += "	Reg #Ra: " + this.registers[32] + "/" + Integer.toHexString(this.registers[32]);
 		return s;
 	}
+	
+	// **
+	public String getContent() {
+		String s = "";
+		for(int i = 0; i < registers.length; i++)
+			s += registers[i] + " " + Integer.toHexString(registers[i]) + " ";
+		return s;
+	}
+	
 }

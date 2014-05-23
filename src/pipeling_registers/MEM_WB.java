@@ -76,4 +76,10 @@ public class MEM_WB {
 
 		return (allControlSignals + restOfContents);
 	}
+	
+	// **
+	public String getContent() {
+		return "" + read_Data + " " + alu_Result + " " + mux3Output + " "
+				+ wb[0] + " " + wb[1];
+	}
 }

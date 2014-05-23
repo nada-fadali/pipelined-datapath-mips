@@ -60,6 +60,17 @@ public class Data_Memory {
 		}
 		return s;
 	}
-
+	
+	// **
+	public String getContent(){
+		String s = "";
+		if (!memory.isEmpty()){
+			for(Map.Entry<Integer, Integer> entry: memory.entrySet()){
+				s += entry.getKey() + " " + entry.getValue() 
+						+ " " + Integer.toHexString(entry.getValue()) + " ";
+			}
+		}
+		return s;
+	}
 	
 }

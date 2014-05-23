@@ -1,6 +1,5 @@
 package gui;
 
-
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -34,11 +33,13 @@ import java.util.ArrayList;
 import javax.swing.JTextField;
 
 import simulator.Program;
+import java.awt.SystemColor;
+import javax.swing.SwingConstants;
 
 public class DPsimulator extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private JPanel contentPane;
 	private JTable registers;
 	private JTable memory;
@@ -56,7 +57,6 @@ public class DPsimulator extends JFrame {
 	private ArrayList<String> code;
 	private ArrayList<String> data;
 	private int pcstart;
-	
 
 	/**
 	 * Launch the application.
@@ -81,7 +81,7 @@ public class DPsimulator extends JFrame {
 		// gui
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("Mips Datapath Simulator");
-		setBounds(100, 100, 640, 568);
+		setBounds(100, 100, 1140, 628);
 		this.initContentPane();
 		this.initCodePanel();
 		this.initInputDataPanel();
@@ -107,24 +107,26 @@ public class DPsimulator extends JFrame {
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0 };
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0 };
-		gbl_contentPane.columnWeights = new double[] { 1.0, 1.0, 0.0, 0.0, 1.0,
-				0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE };
+				0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_contentPane.columnWeights = new double[] { 1.0, 0.0, 0.0, 1.0, 0.0,
+				0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				0.0, 1.0, 1.0, Double.MIN_VALUE };
 		gbl_contentPane.rowWeights = new double[] { 1.0, 0.0, 0.0, 0.0, 1.0,
-				0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0,
-				0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-				0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+				0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0,
+				1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
 	}
 
 	private void initCodePanel() {
 		JScrollPane codesp = new JScrollPane();
 		GridBagConstraints gbc_codesp = new GridBagConstraints();
-		gbc_codesp.gridheight = 9;
-		gbc_codesp.gridwidth = 7;
+		gbc_codesp.anchor = GridBagConstraints.EAST;
+		gbc_codesp.gridheight = 14;
+		gbc_codesp.gridwidth = 8;
 		gbc_codesp.insets = new Insets(0, 0, 5, 5);
 		gbc_codesp.fill = GridBagConstraints.BOTH;
 		gbc_codesp.gridx = 0;
@@ -132,6 +134,14 @@ public class DPsimulator extends JFrame {
 		contentPane.add(codesp, gbc_codesp);
 
 		codetxt = new JTextArea();
+		codetxt.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(e.getKeyChar() == KeyEvent.VK_BACK_SPACE)
+					codetxt.setText(codetxt.getText().substring(0, codetxt.getText().length()));
+				System.out.println(codetxt.getText());
+			}
+		});
 		codetxt.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null,
 				null, null));
 		codetxt.setLineWrap(true);
@@ -139,38 +149,57 @@ public class DPsimulator extends JFrame {
 	}
 
 	private void initInputDataPanel() {
+
+		JLabel lblStartingAddress = new JLabel("Starting Address");
+		GridBagConstraints gbc_lblStartingAddress = new GridBagConstraints();
+		gbc_lblStartingAddress.gridwidth = 5;
+		gbc_lblStartingAddress.insets = new Insets(0, 0, 5, 5);
+		gbc_lblStartingAddress.gridx = 8;
+		gbc_lblStartingAddress.gridy = 5;
+		contentPane.add(lblStartingAddress, gbc_lblStartingAddress);
+
+		pcstarttxt = new JTextField();
+		GridBagConstraints gbc_pcstarttxt = new GridBagConstraints();
+		gbc_pcstarttxt.gridwidth = 5;
+		gbc_pcstarttxt.insets = new Insets(0, 0, 5, 5);
+		gbc_pcstarttxt.fill = GridBagConstraints.HORIZONTAL;
+		gbc_pcstarttxt.gridx = 8;
+		gbc_pcstarttxt.gridy = 6;
+		contentPane.add(pcstarttxt, gbc_pcstarttxt);
+		pcstarttxt.setColumns(10);
 		JLabel lblMemoryAddress = new JLabel("Memory Address");
 		GridBagConstraints gbc_lblMemoryAddress = new GridBagConstraints();
-		gbc_lblMemoryAddress.anchor = GridBagConstraints.EAST;
+		gbc_lblMemoryAddress.gridwidth = 5;
 		gbc_lblMemoryAddress.insets = new Insets(0, 0, 5, 5);
-		gbc_lblMemoryAddress.gridx = 0;
-		gbc_lblMemoryAddress.gridy = 9;
+		gbc_lblMemoryAddress.gridx = 8;
+		gbc_lblMemoryAddress.gridy = 7;
 		contentPane.add(lblMemoryAddress, gbc_lblMemoryAddress);
 
 		dataAddresstxt = new JTextField();
 		GridBagConstraints gbc_dataAddresstxt = new GridBagConstraints();
+		gbc_dataAddresstxt.gridwidth = 5;
 		gbc_dataAddresstxt.insets = new Insets(0, 0, 5, 5);
 		gbc_dataAddresstxt.fill = GridBagConstraints.HORIZONTAL;
-		gbc_dataAddresstxt.gridx = 1;
-		gbc_dataAddresstxt.gridy = 9;
+		gbc_dataAddresstxt.gridx = 8;
+		gbc_dataAddresstxt.gridy = 8;
 		contentPane.add(dataAddresstxt, gbc_dataAddresstxt);
 		dataAddresstxt.setColumns(10);
 
 		JLabel label_1 = new JLabel("Data");
 		GridBagConstraints gbc_label_1 = new GridBagConstraints();
-		gbc_label_1.anchor = GridBagConstraints.EAST;
+		gbc_label_1.gridwidth = 5;
 		gbc_label_1.insets = new Insets(0, 0, 5, 5);
-		gbc_label_1.gridx = 2;
+		gbc_label_1.gridx = 8;
 		gbc_label_1.gridy = 9;
 		contentPane.add(label_1, gbc_label_1);
 
 		dataMemtxt = new JTextField();
 		GridBagConstraints gbc_dataMemtxt = new GridBagConstraints();
-		gbc_dataMemtxt.gridwidth = 2;
+		gbc_dataMemtxt.gridwidth = 5;
 		gbc_dataMemtxt.insets = new Insets(0, 0, 5, 5);
 		gbc_dataMemtxt.fill = GridBagConstraints.HORIZONTAL;
-		gbc_dataMemtxt.gridx = 3;
-		gbc_dataMemtxt.gridy = 9;
+		gbc_dataMemtxt.gridx = 8;
+		gbc_dataMemtxt.gridy = 10;
 		contentPane.add(dataMemtxt, gbc_dataMemtxt);
 		dataMemtxt.setColumns(10);
 
@@ -182,121 +211,120 @@ public class DPsimulator extends JFrame {
 			}
 		});
 		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
+		gbc_btnAdd.gridwidth = 5;
 		gbc_btnAdd.insets = new Insets(0, 0, 5, 5);
-		gbc_btnAdd.gridx = 2;
-		gbc_btnAdd.gridy = 10;
+		gbc_btnAdd.gridx = 8;
+		gbc_btnAdd.gridy = 11;
 		contentPane.add(btnAdd, gbc_btnAdd);
-		
-		JLabel lblStartingAddress = new JLabel("Starting Address");
-		GridBagConstraints gbc_lblStartingAddress = new GridBagConstraints();
-		gbc_lblStartingAddress.anchor = GridBagConstraints.EAST;
-		gbc_lblStartingAddress.insets = new Insets(0, 0, 5, 5);
-		gbc_lblStartingAddress.gridx = 0;
-		gbc_lblStartingAddress.gridy = 11;
-		contentPane.add(lblStartingAddress, gbc_lblStartingAddress);
-		
-		pcstarttxt = new JTextField();
-		GridBagConstraints gbc_pcstarttxt = new GridBagConstraints();
-		gbc_pcstarttxt.insets = new Insets(0, 0, 5, 5);
-		gbc_pcstarttxt.fill = GridBagConstraints.HORIZONTAL;
-		gbc_pcstarttxt.gridx = 1;
-		gbc_pcstarttxt.gridy = 11;
-		contentPane.add(pcstarttxt, gbc_pcstarttxt);
-		pcstarttxt.setColumns(10);
 
 	}
 
 	private void initDataMemory() {
-		// data memory
 		// fill table with data
-		memory = new JTable();
+		String[] col = { "Address", "Dec", "Hex" };
+		String[][] row = { { "0", "0", "0"} };
+
+		memory = new JTable(row, col);
 		memory.setShowHorizontalLines(true);
 		memory.setShowVerticalLines(true);
-		memory.setBorder(new LineBorder(new Color(0, 0, 0)));
+		memory.setBorder(new LineBorder(SystemColor.activeCaptionBorder, 2));
 		memory.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		memory.setEnabled(false);
 
 		JScrollPane memsp = new JScrollPane(memory);
-		memsp.setBorder(new LineBorder(new Color(0, 0, 0)));
+		memsp.setBorder(null);
 		GridBagConstraints gbc_memsp = new GridBagConstraints();
 		gbc_memsp.gridwidth = 6;
-		gbc_memsp.gridheight = 14;
+		gbc_memsp.gridheight = 16;
 		gbc_memsp.insets = new Insets(0, 0, 5, 5);
 		gbc_memsp.fill = GridBagConstraints.BOTH;
-		gbc_memsp.gridx = 7;
+		gbc_memsp.gridx = 13;
 		gbc_memsp.gridy = 0;
 		contentPane.add(memsp, gbc_memsp);
 	}
 
 	private void initRegisterFile() {
-		// register file
 		// fill table with data
-		registers = new JTable();
-		registers.setBorder(new LineBorder(new Color(0, 0, 0)));
+		String[] col = { "Register", "Dec", "Hex" };
+		String[][] row = new String[34][3];
+		for (int i = 0; i < 32; i++) {
+			row[i][0] = "" + i;
+			row[i][1] = "0";
+			row[i][2] = "0";
+		}
+		row[32][0] = "Ra";
+		row[32][1] = "0";
+		row[32][2] = "0";
+		row[33][0] = "PC";
+		row[33][1] = "0";
+		row[33][2] = "0";
+
+		registers = new JTable(row, col);
+		registers.setBorder(new LineBorder(SystemColor.activeCaptionBorder, 2));
 		registers.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		registers.setEnabled(false);
 
 		JScrollPane regsp = new JScrollPane(registers);
-		regsp.setBorder(new LineBorder(new Color(0, 0, 0)));
+		regsp.setBorder(null);
 		GridBagConstraints gbc_regsp = new GridBagConstraints();
-		gbc_regsp.gridheight = 36;
+		gbc_regsp.gridheight = 38;
 		gbc_regsp.fill = GridBagConstraints.BOTH;
-		gbc_regsp.gridx = 13;
+		gbc_regsp.gridx = 19;
 		gbc_regsp.gridy = 0;
 		contentPane.add(regsp, gbc_regsp);
 	}
 
 	private void initButtons() {
+	}
+
+	private void initLblClock() {
 		JButton btnRun = new JButton("run");
+		btnRun.setHorizontalAlignment(SwingConstants.LEADING);
 		btnRun.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String[] tmp = codetxt.getText().split("\n");
-				for(int i = 0; i < tmp.length; i++)
+				for (int i = 0; i < tmp.length; i++)
 					code.add(i, tmp[0]);
 				pcstart = Integer.parseInt(pcstarttxt.getText());
-				
+
 				// start simulator
 				sim = new Program(code, data, pcstart);
 				sim.run();
-				
 			}
 		});
 		GridBagConstraints gbc_btnRun = new GridBagConstraints();
-		gbc_btnRun.anchor = GridBagConstraints.EAST;
 		gbc_btnRun.insets = new Insets(0, 0, 5, 5);
-		gbc_btnRun.gridx = 0;
-		gbc_btnRun.gridy = 12;
+		gbc_btnRun.gridx = 6;
+		gbc_btnRun.gridy = 14;
 		contentPane.add(btnRun, gbc_btnRun);
 
 		JButton btnNext = new JButton("next");
 		GridBagConstraints gbc_btnNext = new GridBagConstraints();
+		gbc_btnNext.gridwidth = 4;
 		gbc_btnNext.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNext.gridx = 1;
-		gbc_btnNext.gridy = 12;
+		gbc_btnNext.gridx = 7;
+		gbc_btnNext.gridy = 14;
 		contentPane.add(btnNext, gbc_btnNext);
 
 		JButton btnFinish = new JButton("finish");
 		GridBagConstraints gbc_btnFinish = new GridBagConstraints();
 		gbc_btnFinish.insets = new Insets(0, 0, 5, 5);
-		gbc_btnFinish.gridx = 2;
-		gbc_btnFinish.gridy = 12;
+		gbc_btnFinish.gridx = 11;
+		gbc_btnFinish.gridy = 14;
 		contentPane.add(btnFinish, gbc_btnFinish);
 
 		JButton btnStop = new JButton("stop");
 		GridBagConstraints gbc_btnStop = new GridBagConstraints();
 		gbc_btnStop.insets = new Insets(0, 0, 5, 5);
-		gbc_btnStop.gridx = 3;
-		gbc_btnStop.gridy = 12;
+		gbc_btnStop.gridx = 12;
+		gbc_btnStop.gridy = 14;
 		contentPane.add(btnStop, gbc_btnStop);
-	}
-
-	private void initLblClock() {
 		JLabel lblClock = new JLabel("Clock #");
 		GridBagConstraints gbc_lblClock = new GridBagConstraints();
 		gbc_lblClock.insets = new Insets(0, 0, 5, 5);
-		gbc_lblClock.gridx = 2;
-		gbc_lblClock.gridy = 13;
+		gbc_lblClock.gridx = 4;
+		gbc_lblClock.gridy = 15;
 		contentPane.add(lblClock, gbc_lblClock);
 
 		JLabel label = new JLabel("0");
@@ -304,8 +332,8 @@ public class DPsimulator extends JFrame {
 		GridBagConstraints gbc_label = new GridBagConstraints();
 		gbc_label.anchor = GridBagConstraints.WEST;
 		gbc_label.insets = new Insets(0, 0, 5, 5);
-		gbc_label.gridx = 3;
-		gbc_label.gridy = 13;
+		gbc_label.gridx = 8;
+		gbc_label.gridy = 15;
 		contentPane.add(label, gbc_label);
 	}
 
@@ -313,10 +341,11 @@ public class DPsimulator extends JFrame {
 
 		JLabel lblIfidRegister = new JLabel("IF/ID REGISTER");
 		GridBagConstraints gbc_lblIfidRegister = new GridBagConstraints();
-		gbc_lblIfidRegister.anchor = GridBagConstraints.WEST;
+		gbc_lblIfidRegister.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblIfidRegister.gridwidth = 5;
 		gbc_lblIfidRegister.insets = new Insets(0, 0, 5, 5);
 		gbc_lblIfidRegister.gridx = 0;
-		gbc_lblIfidRegister.gridy = 14;
+		gbc_lblIfidRegister.gridy = 16;
 		contentPane.add(lblIfidRegister, gbc_lblIfidRegister);
 
 		if_id = new JTable();
@@ -327,11 +356,11 @@ public class DPsimulator extends JFrame {
 		JScrollPane if_idsp = new JScrollPane(if_id);
 		if_idsp.setBorder(new LineBorder(new Color(0, 0, 0)));
 		GridBagConstraints gbc_if_idsp = new GridBagConstraints();
-		gbc_if_idsp.gridwidth = 13;
+		gbc_if_idsp.gridwidth = 19;
 		gbc_if_idsp.insets = new Insets(0, 0, 5, 5);
 		gbc_if_idsp.fill = GridBagConstraints.BOTH;
 		gbc_if_idsp.gridx = 0;
-		gbc_if_idsp.gridy = 17;
+		gbc_if_idsp.gridy = 19;
 		contentPane.add(if_idsp, gbc_if_idsp);
 
 	}
@@ -339,10 +368,11 @@ public class DPsimulator extends JFrame {
 	private void initIDEX() {
 		JLabel lblIdexRegister = new JLabel("ID/EX REGISTER");
 		GridBagConstraints gbc_lblIdexRegister = new GridBagConstraints();
-		gbc_lblIdexRegister.anchor = GridBagConstraints.WEST;
+		gbc_lblIdexRegister.gridwidth = 2;
+		gbc_lblIdexRegister.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblIdexRegister.insets = new Insets(0, 0, 5, 5);
 		gbc_lblIdexRegister.gridx = 0;
-		gbc_lblIdexRegister.gridy = 18;
+		gbc_lblIdexRegister.gridy = 20;
 		contentPane.add(lblIdexRegister, gbc_lblIdexRegister);
 
 		id_ex = new JTable();
@@ -353,11 +383,11 @@ public class DPsimulator extends JFrame {
 		JScrollPane id_exsp = new JScrollPane(id_ex);
 		id_exsp.setBorder(new LineBorder(new Color(0, 0, 0)));
 		GridBagConstraints gbc_id_exsp = new GridBagConstraints();
-		gbc_id_exsp.gridwidth = 13;
+		gbc_id_exsp.gridwidth = 19;
 		gbc_id_exsp.insets = new Insets(0, 0, 5, 5);
 		gbc_id_exsp.fill = GridBagConstraints.BOTH;
 		gbc_id_exsp.gridx = 0;
-		gbc_id_exsp.gridy = 19;
+		gbc_id_exsp.gridy = 21;
 		contentPane.add(id_exsp, gbc_id_exsp);
 
 	}
@@ -368,7 +398,7 @@ public class DPsimulator extends JFrame {
 		gbc_lblExmemRegister.anchor = GridBagConstraints.WEST;
 		gbc_lblExmemRegister.insets = new Insets(0, 0, 5, 5);
 		gbc_lblExmemRegister.gridx = 0;
-		gbc_lblExmemRegister.gridy = 20;
+		gbc_lblExmemRegister.gridy = 22;
 		contentPane.add(lblExmemRegister, gbc_lblExmemRegister);
 
 		ex_mem = new JTable();
@@ -379,11 +409,11 @@ public class DPsimulator extends JFrame {
 		JScrollPane ex_memsp = new JScrollPane(ex_mem);
 		ex_memsp.setBorder(new LineBorder(new Color(0, 0, 0)));
 		GridBagConstraints gbc_ex_memsp = new GridBagConstraints();
-		gbc_ex_memsp.gridwidth = 13;
+		gbc_ex_memsp.gridwidth = 19;
 		gbc_ex_memsp.insets = new Insets(0, 0, 5, 5);
 		gbc_ex_memsp.fill = GridBagConstraints.BOTH;
 		gbc_ex_memsp.gridx = 0;
-		gbc_ex_memsp.gridy = 21;
+		gbc_ex_memsp.gridy = 23;
 		contentPane.add(ex_memsp, gbc_ex_memsp);
 
 	}
@@ -393,7 +423,7 @@ public class DPsimulator extends JFrame {
 		GridBagConstraints gbc_lblMemwbRegister_1 = new GridBagConstraints();
 		gbc_lblMemwbRegister_1.insets = new Insets(0, 0, 5, 5);
 		gbc_lblMemwbRegister_1.gridx = 0;
-		gbc_lblMemwbRegister_1.gridy = 22;
+		gbc_lblMemwbRegister_1.gridy = 24;
 		contentPane.add(lblMemwbRegister_1, gbc_lblMemwbRegister_1);
 
 		mem_wb = new JTable();
@@ -405,11 +435,11 @@ public class DPsimulator extends JFrame {
 		mem_wbsp.setBorder(new LineBorder(new Color(0, 0, 0)));
 		GridBagConstraints gbc_mem_wbsp = new GridBagConstraints();
 		gbc_mem_wbsp.gridheight = 7;
-		gbc_mem_wbsp.gridwidth = 13;
+		gbc_mem_wbsp.gridwidth = 19;
 		gbc_mem_wbsp.insets = new Insets(0, 0, 5, 5);
 		gbc_mem_wbsp.fill = GridBagConstraints.BOTH;
 		gbc_mem_wbsp.gridx = 0;
-		gbc_mem_wbsp.gridy = 23;
+		gbc_mem_wbsp.gridy = 25;
 		contentPane.add(mem_wbsp, gbc_mem_wbsp);
 
 	}
@@ -421,7 +451,7 @@ public class DPsimulator extends JFrame {
 		gbc_lblPcsrcSignal.anchor = GridBagConstraints.WEST;
 		gbc_lblPcsrcSignal.insets = new Insets(0, 0, 5, 5);
 		gbc_lblPcsrcSignal.gridx = 0;
-		gbc_lblPcsrcSignal.gridy = 30;
+		gbc_lblPcsrcSignal.gridy = 32;
 		contentPane.add(lblPcsrcSignal, gbc_lblPcsrcSignal);
 
 		JLabel label_1 = new JLabel(" 0 ");
@@ -429,12 +459,13 @@ public class DPsimulator extends JFrame {
 		GridBagConstraints gbc_label_1 = new GridBagConstraints();
 		gbc_label_1.insets = new Insets(0, 0, 5, 5);
 		gbc_label_1.gridx = 0;
-		gbc_label_1.gridy = 31;
+		gbc_label_1.gridy = 33;
 		contentPane.add(label_1, gbc_label_1);
 	}
 
 	// run frame
 	public void run() {
+		this.pack();
 		this.setVisible(true);
 	}
 }
