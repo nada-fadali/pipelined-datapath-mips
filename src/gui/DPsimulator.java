@@ -261,6 +261,7 @@ public class DPsimulator extends JFrame {
 		gbc_pcstarttxt.gridy = 6;
 		contentPane.add(pcstarttxt, gbc_pcstarttxt);
 		pcstarttxt.setColumns(10);
+		
 		JLabel lblMemoryAddress = new JLabel("Memory Address");
 		GridBagConstraints gbc_lblMemoryAddress = new GridBagConstraints();
 		gbc_lblMemoryAddress.gridwidth = 5;
@@ -376,7 +377,7 @@ public class DPsimulator extends JFrame {
 	}
 
 	private void initButtons() {
-		JButton btnRun = new JButton("run");
+		JButton btnRun =  new JButton("run");
 		btnRun.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

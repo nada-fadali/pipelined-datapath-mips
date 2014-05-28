@@ -85,7 +85,7 @@ public class Instruction_Memory {
 		case "j":
 		case "jal":
 			String[] v4 = { tmp[0], // j or jal
-					this.getLabelAddress(tmp[3]) // label address
+					this.getLabelAddress(tmp[1]) // label address
 			};
 			this.instruction_mem.put(i, v4);
 			break;
